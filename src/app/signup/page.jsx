@@ -2,10 +2,12 @@
 
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from 'react';
+import { useRouter  } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../services/api';
 import Error from '../components/Error'
+import Link from "next/link"
 
 
 const SignUp = () => {
@@ -13,9 +15,11 @@ const SignUp = () => {
   const { loading, user, error } = useSelector(
     (state) => state.auth
   )
+  const router = useRouter();
   const dispatch = useDispatch();
   const [isError, setIsError] = useState('')
   const handleRegisterSubmit = async(data) => {
+  
     setIsError('')
     delete data['confirm_password']
     const formData = { ...data }
@@ -23,10 +27,12 @@ const SignUp = () => {
   }
 
   
+useEffect(() => {
+  if (!user?.error?.message && user) {
+    router.push('/login');
+  }
+}, [user])
 
-if (!user?.error?.message && user) {
-  window.location.replace("/login")
-}
   
   return (
     <div className="container">
@@ -105,7 +111,7 @@ if (!user?.error?.message && user) {
               <button type="submit" className="btn btn-primary">Sign Up</button>
             </form>
             <div className="text-center mt-3">
-              <p>Already have an account? <a href="/login">Login</a></p>
+              <p>Already have an account? <Link href="/login">Login</Link></p>
             </div>
           </div>
         </div>

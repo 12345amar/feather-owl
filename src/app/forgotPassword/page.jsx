@@ -1,5 +1,7 @@
+'use client';
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react';
+import Link from "next/link"
 
 const ForgotPassword = () => {
   return (
@@ -25,7 +27,7 @@ const ForgotPassword = () => {
               </form>
             </div>
             <div className="card-footer text-center">
-              <p className="mb-0">Remembered your password? <a href="/login">Login</a></p>
+              <p className="mb-0">Remembered your password? <Link href="/login">Login</Link></p>
             </div>
           </div>
         </div>

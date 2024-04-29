@@ -1,5 +1,6 @@
 // App/Pages/index.js
 import React from 'react';
+import Link from "next/link"
 
 const About = () => {
   return (
@@ -7,7 +8,7 @@ const About = () => {
       <h1>Home Page</h1>
       <p>Welcome to the home page!</p>
      
-        <a>About Page runn</a>
+      <Link>About Page runn</Link>
    
     </div>
   );

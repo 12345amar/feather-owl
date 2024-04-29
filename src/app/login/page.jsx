@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, fetchCsrfToken } from '../../services/api';
 import Error from '../components/Error'
-import csrf from 'csrf-token'
+import Link from "next/link"
 
 const Login = () => {
   const { loading, user, error } = useSelector(
@@ -23,14 +23,14 @@ const [csrfToken, setCsrfToken] = useState('')
  
  
   useEffect(() => {
-    if (csrfToken === '') {
-      csrf.create('I like CSRF it makes me feel whole').then(token => {
-        console.log("====getcsrfToken", token)
-        setCsrfToken(token)
-      })
-     }
+    // if (csrfToken === '') {
+    //   csrf.create('I like CSRF it makes me feel whole').then(token => {
+    //     console.log("====getcsrfToken", token)
+    //     setCsrfToken(token)
+    //   })
+    //  }
   }, [])
-  console.log("=getcsrfToken", csrfToken)
+  // console.log("=getcsrfToken", csrfToken)
   const handleLoginSubmit = (data) => {
     const formData = {...data, csrfmiddlewaretoken: csrfToken}; // Get form data
      console.log("======formData========>", formData)
@@ -73,11 +73,11 @@ const [csrfToken, setCsrfToken] = useState('')
                 <button type="submit" className="btn btn-primary btn-block">Login</button>
               </form>
               <div className="text-center mt-3">
-                <a href="/forgotPassword">Forgot Password?</a>
+                <Link href="/forgotPassword">Forgot Password?</Link>
               </div>
             </div>
             <div className="card-footer text-center">
-              <p className="mb-0">Don't have an account? <a href="/signup">Sign up</a></p>
+              <p className="mb-0">Don't have an account? <Link href="/signup">Sign up</Link></p>
             </div>
           </div>
         </div>

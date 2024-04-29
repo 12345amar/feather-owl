@@ -1,8 +1,9 @@
+
+import { Providers } from "../redux/providers";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "../redux/providers";
-
 const inter = Inter({ subsets: ["latin"] });
+
 
 export const metadata = {
   title: "Create Next App",
@@ -12,13 +13,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-      <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
-        </body>
-    </html>
-  );
+
+     
+        <body className={inter.className}>
+          <Providers>
+        {children}
+
+      </Providers>
+
+      </body>
+    </html>)
+
 }
