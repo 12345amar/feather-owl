@@ -5,39 +5,39 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, fetchCsrfToken } from '../../services/api';
+import { useRouter  } from 'next/navigation'
+import { login } from '../../services/api';
 import Error from '../components/Error'
 import Link from "next/link"
 
 const Login = () => {
-  const { loading, user, error } = useSelector(
+  const { loading, user, error: apiError } = useSelector(
     (state) => state.auth
   )
+  const router = useRouter();
   const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm()
-const [csrfToken, setCsrfToken] = useState('')
  
  
   useEffect(() => {
-    // if (csrfToken === '') {
-    //   csrf.create('I like CSRF it makes me feel whole').then(token => {
-    //     console.log("====getcsrfToken", token)
-    //     setCsrfToken(token)
-    //   })
-    //  }
-  }, [])
-  // console.log("=getcsrfToken", csrfToken)
+    if(!loading && apiError?.message) {
+      return false
+    }
+    if (!loading && !user?.error?.message && user) {
+      router.push('/dashboard');
+    }
+  }, [loading, user, apiError])
+
   const handleLoginSubmit = (data) => {
-    const formData = {...data, csrfmiddlewaretoken: csrfToken}; // Get form data
-     console.log("======formData========>", formData)
+    const formData = { ...data }; // Get form data
     dispatch(login(formData))
   };
 
-  console.log("=====user=========>",csrfToken)
+  console.log("=====user=========>",user)
   return (
     <div className="container login-container">
       <div className="row justify-content-center">
@@ -45,11 +45,10 @@ const [csrfToken, setCsrfToken] = useState('')
           <div className="card">
             <div className="card-header">
               <h3 className="text-center">Login</h3>
-              {error && <Error>{error}</Error>}
+              {apiError && <Error>{apiError.message}</Error>}
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit(handleLoginSubmit)}>
-                <input {...register('csrfmiddlewaretoken')} type="hidden" name="csrfmiddlewaretoken" value={csrfToken}/>
                 <div className="form-group">
                   <label htmlFor="username">Username:</label>
                   <div className="input-group">
