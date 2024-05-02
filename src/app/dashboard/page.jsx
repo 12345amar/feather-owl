@@ -1,32 +1,22 @@
 'use client';
 /* eslint-disable react/no-unescaped-entities */
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from "next/link"
+import { useRouter  } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
 
 const Dashboard = () => {
     const { loading, user, error: apiError } = useSelector(
         (state) => state.auth
       )
-      const {
-        aud,
-        aut,
-        azp,
-        client_id,
-        email,
-        exp,
-        family_name,
-        given_name,
-        iat,
-        iss,
-        jti,
-        nbf,
-        roles,
-        scope,
-        sub: subUser,
-        tokenExpireTime,
-        username
-      } = user
+      const router = useRouter();
+
+      useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login');
+        }
+      }, [loading, user])
+     
   return (
     <div className="container forgot-container">
       <div className="row justify-content-center">
@@ -36,12 +26,12 @@ const Dashboard = () => {
               <h3 className="text-center">Dashboard</h3>
             </div>
             <div className="card-body">
-             <p>email: {email}</p>
-             <p>Username: {username}</p>
-             <p>sub: {subUser}</p>
-             <p>given_name: {given_name}</p>
-             <p>family_name: {family_name}</p>
-             <p>exp: {exp}</p>
+             <p>email: {user?.email}</p>
+             <p>Username: {user?.username}</p>
+             <p>sub: {user?.subUser}</p>
+             <p>given_name: {user?.given_name}</p>
+             <p>family_name: {user?.family_name}</p>
+             <p>exp: {user?.exp}</p>
             </div>
           </div>
         </div>

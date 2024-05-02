@@ -11,7 +11,7 @@ import Error from '../components/Error'
 import Link from "next/link"
 
 const Login = () => {
-  const { loading, user, error: apiError } = useSelector(
+  const { loading, user, error: apiError = '' } = useSelector(
     (state) => state.auth
   )
   const router = useRouter();
@@ -24,10 +24,7 @@ const Login = () => {
  
  
   useEffect(() => {
-    if(!loading && apiError?.message) {
-      return false
-    }
-    if (!loading && !user?.error?.message && user) {
+    if (!loading && user && !user?.error?.message) {
       router.push('/dashboard');
     }
   }, [loading, user, apiError])
@@ -35,9 +32,7 @@ const Login = () => {
   const handleLoginSubmit = (data) => {
     const formData = { ...data }; // Get form data
     dispatch(login(formData))
-  };
-
-  console.log("=====user=========>",user)
+  }
   return (
     <div className="container login-container">
       <div className="row justify-content-center">
@@ -45,7 +40,10 @@ const Login = () => {
           <div className="card">
             <div className="card-header">
               <h3 className="text-center">Login</h3>
-              {apiError && <Error>{apiError.message}</Error>}
+              {user?.error?.message && 
+            <div class="alert alert-danger" role="alert">
+              {user?.error?.message}
+            </div>}
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit(handleLoginSubmit)}>

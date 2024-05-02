@@ -58,18 +58,23 @@ export const login = createAsyncThunk('/auth/login', async (requestParams) => {
       return await fetch(authTokenUrl, requestOptions)
         .then((response) => response.json())
         .then((result) => { 
-          console.info("Login API:", result, result?.access_token, parseJwt(result?.access_token))
-          const jwtTokenDecode = parseJwt(result?.access_token)
-          const ecryptedAccessToken = encryptToken(result.access_token, encryptKey.LOGIN_SECRET)
-          sessionStorage.setItem('afo', ecryptedAccessToken);
-          return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in }
+          if (result?.access_token) {
+            console.log("Login API:", result, result?.access_token, parseJwt(result?.access_token))
+            const jwtTokenDecode = parseJwt(result?.access_token)
+            const ecryptedAccessToken = encryptToken(result.access_token, encryptKey.LOGIN_SECRET)
+            sessionStorage.setItem('afo', ecryptedAccessToken);
+            return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in }
+          }
+          console.error("Login API:", result)
+          return { error: { message: result?.error_description }}
         })
         .catch((error) => {
           console.error("Login API:", error)
           return { error: { message: error.error_description }}
         });
     } catch (error) {
-      throw error.response.data;
+      console.error("Login API:", error)
+      // throw error.response.data;
     }
 });
 
