@@ -26,9 +26,27 @@ const getAutherizationCredentials = async () => {
       return {clientId, secretId, grantType, scope, authTokenUrl, basicAuthCredential}
 }
 
+const developerLogin = (paramsData) => {
+  try {
+    if (paramsData?.accessToken) {
+      const jwtTokenDecode = parseJwt(paramsData?.accessToken)
+      const ecryptedAccessToken = encryptToken(paramsData?.accessToken, encryptKey.LOGIN_SECRET)
+      if (!paramsData?.isAuthCheck) {
+        sessionStorage.setItem('afo', ecryptedAccessToken)
+      }
+
+      return  { ...jwtTokenDecode, tokenExpireTime: 3600 }
+    }
+  } catch (error) {
+    return { error: { message: "Access token is not correct." } }
+  }
+}
 export const login = createAsyncThunk('/auth/login', async (requestParams) => {
     try {
-      const {username, password} = requestParams
+      const {username, password, isDeveloper = false } = requestParams
+      if (isDeveloper) {
+        return await developerLogin(requestParams)
+      }
       if (!username) {
         console.error("Login API:", errorMessage.usernameRequired)
         return { error: { message: errorMessage.usernameRequired }}
@@ -59,7 +77,7 @@ export const login = createAsyncThunk('/auth/login', async (requestParams) => {
         .then((response) => response.json())
         .then((result) => { 
           if (result?.access_token) {
-            console.log("Login API:", result, result?.access_token, parseJwt(result?.access_token))
+            console.log("Login API:", parseJwt(result?.access_token))
             const jwtTokenDecode = parseJwt(result?.access_token)
             const ecryptedAccessToken = encryptToken(result.access_token, encryptKey.LOGIN_SECRET)
             sessionStorage.setItem('afo', ecryptedAccessToken);

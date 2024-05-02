@@ -16,6 +16,13 @@ reducers: {
   clearError: state => {
     state.error = null;
   },
+  logoutUser: () => {
+    return {
+      user: null,
+      error: null,
+      loading: false
+    }
+  }
 },
 extraReducers: builder => {
   builder
@@ -55,6 +62,6 @@ extraReducers: builder => {
 },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, logoutUser } = authSlice.actions;
 
 export default authSlice.reducer;

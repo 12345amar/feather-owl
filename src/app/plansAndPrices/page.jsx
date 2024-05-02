@@ -56,7 +56,7 @@ const PlansAndPrices = () => {
                     </Nav.Item>
                 </Nav>
                 </Row>
-                <Row>
+                <Row className="flex full-width">
                 <Tab.Content>
                     <Tab.Pane eventKey="first">First tab content</Tab.Pane>
                     <Tab.Pane eventKey="second">Second tab content</Tab.Pane>
