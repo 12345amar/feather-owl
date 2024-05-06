@@ -6,90 +6,79 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter  } from 'next/navigation'
-import { login } from '../../services/api';
+import { getPricePlans, getSubscriptions } from '../../services/api';
 import Error from '../components/Error'
-import Link from "next/link"
-import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
-import Tab from 'react-bootstrap/Tab';
+import CardSlider from '../components/plansPriceSlider';
 
 
 const PlansAndPrices = () => {
-//   const { loading, user, error: apiError } = useSelector(
-//     (state) => state.auth
-//   )
-//   const router = useRouter();
-//   const dispatch = useDispatch();
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm()
- 
- 
-//   useEffect(() => {
-//     if(!loading && apiError?.message) {
-//       return false
-//     }
-//     if (!loading && !user?.error?.message && user) {
-//       router.push('/dashboard');
-//     }
-//   }, [loading, user, apiError])
+    const router = useRouter()
+    const dispatch = useDispatch();
+    const { subscriptions, pricePlans, loading } = useSelector(state => state.subscription);
+    const [getPriceUsdPlans, setGetPriceUsdPlans] = useState([])
+    const [pricePlansType, setPricePlansType] = useState('monthly')
 
-//   const handleLoginSubmit = (data) => {
-//     const formData = { ...data }; // Get form data
-//     dispatch(login(formData))
-//   }
+
+      useEffect(() => {
+        if (pricePlans?.length === 0 && !loading) {
+            dispatch(getPricePlans())
+        }
+        if (subscriptions?.length === 0 && !loading) {
+            dispatch(getSubscriptions())
+        }
+      }, [])
+      const filterPlanType = (pricePlansData, type) => {
+      const getTypeData = []
+            let typeData = {}
+            pricePlansData.forEach( (element) => {
+                for (const key in element) {
+                    if (key.includes(type)) {
+                        typeData[key] = element[key]
+                    }
+                    }
+                    getTypeData.push(typeData)
+            });
+
+            return typeData
+        }
+      const usdPlans = [3, 6, 9, 12]
+      useEffect(() => {
+        if (!loading && pricePlans) {
+            const getUsdPlans = pricePlans.filter((a) => usdPlans.includes(a.pricePlanID))
+            setGetPriceUsdPlans(getUsdPlans)
+        }
+      }, [loading, pricePlans])
+
+      
+
+      const getPlanType = (type) => {
+        setPricePlansType(type)
+        
+      }
+console.log("=====setPricePlansType", pricePlansType)
   return (
-    <div className="container login-container">
-      <div className="row justify-content-center">
-      <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-      <Row>
-               
-                <Nav variant="pills" className="flex-row">
-                    <Nav.Item>
-                    <Nav.Link eventKey="first">Tab 1</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                    <Nav.Link eventKey="second">Tab 2</Nav.Link>
-                    </Nav.Item>
-                </Nav>
-                </Row>
-                <Row className="flex full-width">
-                <Tab.Content>
-                    <Tab.Pane eventKey="first">First tab content</Tab.Pane>
-                    <Tab.Pane eventKey="second">Second tab content</Tab.Pane>
-                </Tab.Content>
-                
-            </Row>
-            </Tab.Container>
-        {/* <div className="col-md-6">
-
-          <div className="card">
-            <div className="card-header">
-              <h3 className="text-center">Plans and Prices</h3>
-              
-            </div>
-
-          
+    <div className="price-plans">
+    <h1>Subscribe</h1>
+   
+       
+        <div className="row">
+            <span className="subscription-cta">
+                <button className="btn btn-info" onClick={() => {getPlanType('monthly')}}>Monthly</button>
+                <button className="btn btn-info" onClick={() => {getPlanType('quarterly')}}>Quatrly</button>
+                <button className="btn btn-info" onClick={() => {getPlanType('yearly')}}>Yearly</button>
+            </span>
+        </div>
+        {!loading && getPricePlans?.length && subscriptions?.length? 
 
 
-
-            <div className="card-body">
-              
-              <div className="text-center mt-3">
-                <Link href="/forgotPassword">Forgot Password?</Link>
-              </div>
-            </div>
-            <div className="card-footer text-center">
-              <p className="mb-0">Don't have an account? <Link href="/signup">Sign up</Link></p>
-            </div>
-          </div>
-        </div> */}
-      </div>
-    </div>
+        <CardSlider cards={getPriceUsdPlans} subscriptionsCard={subscriptions} subsType={pricePlansType} />
+       
+        : <h6 style={{textAlign: 'center'}}>Loading...</h6>}
+        <div className="continue-cta">
+        <button className="btn btn-primary" onClick={() => router.push('/dashboard')}>Continue</button>
+        </div>
+  </div>
   );
-};
+}; 
 
 export default PlansAndPrices;

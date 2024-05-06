@@ -11,9 +11,7 @@ import Error from '../components/Error'
 import Link from "next/link"
 
 const Login = () => {
-  const { loading, user, error: apiError = '' } = useSelector(
-    (state) => state.auth
-  )
+  const { loading, user, error: apiError = '' } = useSelector((state) => state.auth)
   const router = useRouter();
   const dispatch = useDispatch();
   const {
@@ -25,7 +23,7 @@ const Login = () => {
  
   useEffect(() => {
     if (!loading && user && !user?.error?.message) {
-      router.push('/dashboard');
+      router.push('/plansAndPrices');
     }
   }, [loading, user, apiError])
 

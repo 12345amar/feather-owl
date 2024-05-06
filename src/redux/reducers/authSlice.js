@@ -1,9 +1,9 @@
 
 
 // redux/authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { login, register } from '@/services/api';
-import axios from 'axios';
+
 
 const authSlice = createSlice({
   name: 'auth',

@@ -12,7 +12,7 @@ const Dashboard = () => {
       )
       const router = useRouter();
       const dispatch = useDispatch();
-
+console.log("===user", user)
 // useEffect(() => {
 //   if (!loading && !user) {
 //       router.push('/login');

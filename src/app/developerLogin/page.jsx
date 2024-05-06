@@ -22,7 +22,7 @@ export default function DeveloperLogin() {
  
   useEffect(() => {
     if (!loading && user && !user?.error?.message) {
-      router.push('/dashboard');
+      router.push('/plansAndPrices');
     }
   }, [loading, user, apiError])
 
