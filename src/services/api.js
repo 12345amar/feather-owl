@@ -1,5 +1,6 @@
 // utils/api.js
 import axios from 'axios';
+import { NextResponse } from "next/server";
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Agent } from 'https';
 import { successMessage, errorMessage } from '@/utils/apiMessages';
@@ -7,26 +8,44 @@ import { encryptToken, encryptKey, parseJwt, decryptToken } from '@/utils/consta
 
 const API_BASE_URL = 'http://84.227.19.180'; // Replace with your API base URL
 // const API_BASE_URL = 'http://k8s.integration.feather-lab.com:32744'
+const PROXY_URL = 'http://localhost:3000/api/proxy'
 
 const apiUrl = {
   LOGIN_URL: `${API_BASE_URL}/login/`,
   REGISTER_URL: `${API_BASE_URL}/userregister/`,
   PRICE_PLANS: `${API_BASE_URL}/priceplans/`,
-  SUBSCRIPTIONS: `${API_BASE_URL}/subscriptionplans/`,
-  
+  SUBSCRIPTION_PLANS: `${API_BASE_URL}/subscriptionplans/`
 }
 
 
-
+let proxyCall = async (url) => {
+  const requestOptions2 = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer eyJ4NXQiOiJNell4TW1Ga09HWXdNV0kwWldObU5EY3hOR1l3WW1NNFpUQTNNV0kyTkRBelpHUXpOR00wWkdSbE5qSmtPREZrWkRSaU9URmtNV0ZoTXpVMlpHVmxOZyIsImtpZCI6Ik16WXhNbUZrT0dZd01XSTBaV05tTkRjeE5HWXdZbU00WlRBM01XSTJOREF6WkdRek5HTTBaR1JsTmpKa09ERmtaRFJpT1RGa01XRmhNelUyWkdWbE5nX1JTMjU2IiwidHlwIjoiYXQrand0IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJvbS5zdW5ueWRAZ21haWwuY29tIiwiYXV0IjoiQVBQTElDQVRJT05fVVNFUiIsInJvbGVzIjoiZXZlcnlvbmUiLCJpc3MiOiJodHRwczpcL1wvaXMuaW50ZWdyYXRpb24uZmVhdGhlci1sYWIuY29tOjk0NDRcL29hdXRoMlwvdG9rZW4iLCJnaXZlbl9uYW1lIjoiT20iLCJjbGllbnRfaWQiOiJCb1c3bHg2bDFJTmxNa2oxa2R2M2NDQlYwYXdhIiwiYXVkIjoiQm9XN2x4NmwxSU5sTWtqMWtkdjNjQ0JWMGF3YSIsIm5iZiI6MTcxNTQxMzA1OSwiYXpwIjoiQm9XN2x4NmwxSU5sTWtqMWtkdjNjQ0JWMGF3YSIsInNjb3BlIjoib3BlbmlkIiwiZXhwIjoxNzE1NDE2NjU5LCJpYXQiOjE3MTU0MTMwNTksImZhbWlseV9uYW1lIjoiU2luZ2giLCJqdGkiOiIwOTkyNTkwMi02ZTY3LTRlM2UtYjhiOC04YTlhYTcwY2UwMTkiLCJlbWFpbCI6Im9tLnN1bm55ZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im9tLnN1bm55ZEBnbWFpbC5jb20ifQ.p9Ut2c0OmrqVCGeNOGoV9R3Z8p6zOViuyQ68p97-nN3EjtByWTMv2xdtW4wv-hTbintKBsJp4b20krvAe5ZM0FIrAm_VESGgxtqEs1SNcyW0D12i4M8hIjDh3RDx2ClmELbReG2DusWuXz8-ggHefLbPaHcRzltMK4suHyE40r6bI8KHSRlIkFbHZDpMmT9z8w47jmEOjUbiPOVmM-lDIBMkvaK8qXvTI4eq7aHtRkoLbc_PxQxg8aWTfnR70U7GL4spfGT8MP6a3JY1AfUSBTMBiwYVKIjOIZoePZyGmhcHZxWXW7wiefg6hNm9J8FQ3ordB2AOL2nLZdtkX6wAyw`
+    },
+    redirect: "follow"
+  
+  };
+  let data = await fetch(url, requestOptions2);
+  data = await data.text();
+  return data;
+}
+const corsDsiableHeader =  {
+  status: 200,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }
+}
 
 
 const myHeaders = () => {
   const myHeader = new Headers();
-  // const accessToken = sessionStorage.getItem('afo');
-  // const decryptTokens = decryptToken(accessToken, encryptKey.LOGIN_SECRET)
-  // myHeader.append("Authorization", decryptTokens);
-
-  myHeader.append("Authorization", "eyJ4NXQiOiJNell4TW1Ga09HWXdNV0kwWldObU5EY3hOR1l3WW1NNFpUQTNNV0kyTkRBelpHUXpOR00wWkdSbE5qSmtPREZrWkRSaU9URmtNV0ZoTXpVMlpHVmxOZyIsImtpZCI6Ik16WXhNbUZrT0dZd01XSTBaV05tTkRjeE5HWXdZbU00WlRBM01XSTJOREF6WkdRek5HTTBaR1JsTmpKa09ERmtaRFJpT1RGa01XRmhNelUyWkdWbE5nX1JTMjU2IiwidHlwIjoiYXQrand0IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJqcnVpLm9saXZlaXJhbHZlc0BnbWFpbC5jb20iLCJhdXQiOiJBUFBMSUNBVElPTl9VU0VSIiwicm9sZXMiOlsiQXBwbGljYXRpb25cL0ZlYXRoZXJTdXBlclVzZXIiLCJBcHBsaWNhdGlvblwvRmVhdGhlclN5c3RlbUFkbWluaXN0cmF0b3IiLCJBcHBsaWNhdGlvblwvZmVhdGhlcjEiLCJkZXZvcHMiLCJzdWJzY3JpYmVyIiwiYW5hbHl0aWNzIiwiY3JlYXRvciIsImludGVncmF0aW9uX2RldiIsIm9ic2VydmVyIiwicHVibGlzaGVyIiwic3lzdGVtIiwiZXZlcnlvbmUiXSwiaXNzIjoiaHR0cHM6XC9cL2lzLmludGVncmF0aW9uLmZlYXRoZXItbGFiLmNvbTo5NDQ0XC9vYXV0aDJcL3Rva2VuIiwiZ2l2ZW5fbmFtZSI6Impvc2UgcnVpIiwiY2xpZW50X2lkIjoiQm9XN2x4NmwxSU5sTWtqMWtkdjNjQ0JWMGF3YSIsImF1ZCI6IkJvVzdseDZsMUlObE1rajFrZHYzY0NCVjBhd2EiLCJuYmYiOjE3MTQ5Mjk1NjMsImF6cCI6IkJvVzdseDZsMUlObE1rajFrZHYzY0NCVjBhd2EiLCJzY29wZSI6Im9wZW5pZCIsImV4cCI6MTcxNDkzMzE2MywiaWF0IjoxNzE0OTI5NTYzLCJmYW1pbHlfbmFtZSI6Impvc2UgcnVpIiwianRpIjoiZDM0NTgxZTMtOTYxMS00MGZjLWI3M2EtZWEzNTljZjEwOTdhIiwiZW1haWwiOiJqcnVpLm9saXZlaXJhbHZlc0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImpydWkub2xpdmVpcmFsdmVzQGdtYWlsLmNvbSJ9.BVvh0shf_DS7tKbrdITzjYOQKdF1EhPaaLxbHy8id8C4s2seQALMbOnB0ilbfLLCRWXCaMmXKBm8E-8p9-ejriHeSp0tZpQvDiEiSXvbIo1hwqBnpDM9avx4koyQR2OUqUlLTrG7Yh9VI9CDFQ9sfnek2vUhZX06HfyCz_FFNvnO_waZF_Ow02hcnptMmwfQFdfZ7P31h4ESPgcLPwjCE1eqaViSvTZ-BGTqPeyvinTN_DdwMxg8749eA86_n0YSekYiw-j2cnDW8gzlWqPjgxu_kT9ubuIvUhR5pp3FMffzU_KYkUVTuo2wUyCg5a-04cxlbqakNypOWuEGBvokAA");
+  const accessToken = sessionStorage.getItem('afo')
+  const decryptTokens = decryptToken(accessToken, encryptKey.LOGIN_SECRET)
+  myHeader.append("Authorization", decryptTokens)
   return myHeader
 }
 const getAutherizationCredentials = async () => {
@@ -127,23 +146,32 @@ export const register = createAsyncThunk('auth/register', async (requestParams) 
   }
 });
 
+
+  export const getUserSubscriptions = createAsyncThunk('subscription/getUserSubscriptions', async () => {
+    try {
+      const requestParams = JSON.stringify({operation: '/subscriptions/'})
+      console.log('getUserSubscriptions running')
+      const res = await fetch(PROXY_URL, {method: "POST", headers: myHeaders(), body: requestParams });
+      
+      const data = await res.json();
+      console.log('getUserSubscriptions running data', data)
+      return data
+    } catch (error) {
+      console.error("api subscriptions:", error)
+      const message = error?.response?.data?.username?.[0] ? error?.response?.data?.username?.[0] : 'Something went to wrong'
+      throw { error: { message } }
+    }
+  })
 export const getPricePlans = createAsyncThunk('subscription/getPricePlans', async () => {
   try {
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders(),
-      redirect: "follow"
-    };
-    return await fetch(apiUrl.PRICE_PLANS, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("loaded pricePlans sucess:")
-        return result
-      })
-      .catch((error) => {
-        console.error("api priceplans:", error)
-        return { error: { message: error?.message } }
-      });
+    const response = await fetch(apiUrl.PRICE_PLANS, {method: "GET", headers: myHeaders()})
+    const result = response.json()
+    if (result) {
+      console.log("loaded pricePlans sucess:")
+      return result
+    }
+    console.error("api priceplans:", error)
+    return { error: { message: error?.message } }
   } catch (error) {
     console.error("api pricePlans:", error)
     const message = error?.response?.data?.username?.[0] ? error?.response?.data?.username?.[0] : 'Something went to wrong'
@@ -151,23 +179,56 @@ export const getPricePlans = createAsyncThunk('subscription/getPricePlans', asyn
   }
 })
 
+export const getFileStores = createAsyncThunk('files/getFileStores', async () => {
+  try { 
+    const requestParams = JSON.stringify({operation: '/filestores/'})
+    const response = await fetch(PROXY_URL, {method: "POST", headers: myHeaders(), body: requestParams})
+    const result = await response.json()
+console.log("=======", result)
+    if (result?.length) {
+      console.log("loaded filestores sucess:")
+      return result
+    }
+    console.error("api filestores:", 'File records do not exist.')
+    return { error: { message: 'File records do not exist.' } }
+  } catch (error) {
+    console.error("api filestores:", error)
+    const message = error?.response?.data?.username?.[0] ? error?.response?.data?.username?.[0] : 'Something went to wrong'
+    throw { error: { message } }
+  }
+})
+
+export const createFileStores = createAsyncThunk('files/createFileStores', async (params) => {
+  try { 
+    const requestParams = JSON.stringify({operation: '/filestores/', method: 'post', ...params})
+    const response = await fetch(PROXY_URL, {method: "POST", headers: myHeaders(), body: requestParams})
+    const result = response.json()
+    console.log("=========result",)
+    if (result) {
+      console.log("loaded filestores sucess:")
+      return result
+    }
+    console.error("api filestores:", error)
+    return { error: { message: error?.message } }
+  } catch (error) {
+    console.error("api filestores:", error)
+    const message = error?.response?.data?.username?.[0] ? error?.response?.data?.username?.[0] : 'Something went to wrong'
+    throw { error: { message } }
+  }
+})
+
+
 export const getSubscriptions = createAsyncThunk('subscription/getSubscriptions', async () => {
   try {
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders(),
-      redirect: "follow"
-    };
-    return await fetch(apiUrl.SUBSCRIPTIONS, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
+      const response = await fetch(apiUrl.SUBSCRIPTION_PLANS, {method: "GET",headers: myHeaders()})
+      const result = response.json()
+      if (result) {
         console.log("loaded subscriptions sucess:")
         return result
-      })
-      .catch((error) => {
-        console.error("api subscriptions:", error)
-        return { error: { message: error?.message } }
-      });
+      }
+      console.error("api subscriptions:", error)
+      return { error: { message: error?.message } }
+
   } catch (error) {
     console.error("api subscriptions:", error)
     const message = error?.response?.data?.username?.[0] ? error?.response?.data?.username?.[0] : 'Something went to wrong'

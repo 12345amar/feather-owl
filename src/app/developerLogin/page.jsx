@@ -5,12 +5,12 @@ import styles from "./../page.module.css";
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter  } from 'next/navigation'
-import { login } from '../../services/api';
+import { login, getUserSubscriptions  } from '../../services/api';
 
 export default function DeveloperLogin() {
-  const { loading, user, error: apiError = '' } = useSelector(
-    (state) => state.auth
-  )
+  const state = useSelector(state => state)
+  const { loading, user } = state.auth
+  const  { userSubscriptions, loading: loadingUserSubscription } = state.subscription
   const router = useRouter();
   const dispatch = useDispatch();
   const {
@@ -19,16 +19,20 @@ export default function DeveloperLogin() {
     formState: { errors },
   } = useForm()
  
- 
   useEffect(() => {
-    if (!loading && user && !user?.error?.message) {
-      router.push('/plansAndPrices');
+    if (!loadingUserSubscription && userSubscriptions?.length) {
+      router.push('/dashboard')
     }
-  }, [loading, user, apiError])
+    if (!loading && user && !loadingUserSubscription &&  !userSubscriptions?.length) {
+      router.push('/plansAndPrices')
+    }
+  }, [loading, user,  userSubscriptions, loadingUserSubscription])
 
   const handleLoginSubmit = (data) => {
     const formData = { ...data, isDeveloper: true }; // Get form data
     dispatch(login(formData))
+    dispatch(getUserSubscriptions())
+    
   }
   return (
     <main className={styles.main}>

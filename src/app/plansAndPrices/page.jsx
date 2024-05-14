@@ -12,14 +12,22 @@ import CardSlider from '../components/plansPriceSlider';
 
 
 const PlansAndPrices = () => {
+  const currencyList = {
+    usd: [3, 6, 9, 12],
+    chf: [1, 4, 10],
+    euro: [2, 5, 11]
+  }
+
+
+
     const router = useRouter()
     const dispatch = useDispatch();
     const { subscriptions, pricePlans, loading } = useSelector(state => state.subscription);
     const [getPriceUsdPlans, setGetPriceUsdPlans] = useState([])
     const [pricePlansType, setPricePlansType] = useState('monthly')
-
-
-      useEffect(() => {
+    const [selectedCurrency, setSelectedCurrency] = useState('usd')
+    console.log("====subscriptions", subscriptions)
+    useEffect(() => {
         if (pricePlans?.length === 0 && !loading) {
             dispatch(getPricePlans())
         }
@@ -27,35 +35,22 @@ const PlansAndPrices = () => {
             dispatch(getSubscriptions())
         }
       }, [])
-      const filterPlanType = (pricePlansData, type) => {
-      const getTypeData = []
-            let typeData = {}
-            pricePlansData.forEach( (element) => {
-                for (const key in element) {
-                    if (key.includes(type)) {
-                        typeData[key] = element[key]
-                    }
-                    }
-                    getTypeData.push(typeData)
-            });
-
-            return typeData
-        }
-      const usdPlans = [3, 6, 9, 12]
-      useEffect(() => {
-        if (!loading && pricePlans) {
-            const getUsdPlans = pricePlans.filter((a) => usdPlans.includes(a.pricePlanID))
-            setGetPriceUsdPlans(getUsdPlans)
-        }
-      }, [loading, pricePlans])
-
       
+   
+      useEffect(() => {
+        if (!loading && pricePlans?.length) {
+            const getPlans = pricePlans?.filter((a) => currencyList[selectedCurrency]?.includes(a.pricePlanID))
+            setGetPriceUsdPlans(getPlans)
+        }
+      }, [loading, pricePlans, selectedCurrency])
 
       const getPlanType = (type) => {
         setPricePlansType(type)
-        
       }
-console.log("=====setPricePlansType", pricePlansType)
+  const changeCurrency = (event) => {
+    event.preventDefault()
+    setSelectedCurrency(event.target.value)
+  }
   return (
     <div className="price-plans">
     <h1>Subscribe</h1>
@@ -67,11 +62,20 @@ console.log("=====setPricePlansType", pricePlansType)
                 <button className="btn btn-info" onClick={() => {getPlanType('quarterly')}}>Quatrly</button>
                 <button className="btn btn-info" onClick={() => {getPlanType('yearly')}}>Yearly</button>
             </span>
+            <div className="currency-selector-area">
+            <select class="my-select selectpicker currency-selector" data-container="body" onChange={e => changeCurrency(e)}>
+                <option selected value="usd">{`USD (US Dollar)`}</option>
+                <option  value="chf">{`CHF (Swiss Franc)`}</option>
+                <option value="euro">{`EUR (Euro)`}</option>
+            </select>
+          </div>
         </div>
+        
+
         {!loading && getPricePlans?.length && subscriptions?.length? 
 
 
-        <CardSlider cards={getPriceUsdPlans} subscriptionsCard={subscriptions} subsType={pricePlansType} />
+        <CardSlider cards={getPriceUsdPlans} subscriptionsCard={subscriptions} subsType={pricePlansType} selectedCurrency={selectedCurrency}/>
        
         : <h6 style={{textAlign: 'center'}}>Loading...</h6>}
         <div className="continue-cta">

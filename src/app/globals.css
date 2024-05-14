@@ -116,20 +116,23 @@ a {
 
 .plans-price-slider .prev-button {
  
+  margin-top: 15%;
+  position: -webkit-sticky;
   position: sticky;
   left: 0;
   z-index: 999;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0.5;
-  font-size: 40px;
-  padding-top: 26px;
-  padding-bottom: 26px;
+  font-size: 14px;
+  padding: 12px;
+  height: 100px;
+  font-weight: 700;
 }
 .subscription-cta {
   position: relative;
   width: 100%;
-  height: 100px;
+  padding: 15px 0px;
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
@@ -138,20 +141,34 @@ a {
   margin-left: 10px;
 }
 .plans-price-slider .next-button {
-
+  margin-top: 15%;
   position: sticky;
   right: 0;
   z-index: 999;
   cursor: pointer;
   background-color: rgba(0,0,0,0.5);
-
   opacity: 0.5;
-  font-size: 40px;
-  padding-top: 26px;
-  padding-bottom: 26px;
+  font-size: 14px;
+  padding: 12px;
+  height: 100px;
+  font-weight: 700;
+}
+
+.card {
+  border: 1px solid #ebedf2 !important;
+  width: 415px !important;
 }
 
 .card-body {
+  font-size: 13px;
+  font-weight: 400;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  line-height: 24px !important;
+}
+.card-body p {
   font-size: 13px;
   font-weight: 400;
 }
@@ -221,5 +238,37 @@ a {
 .continue-cta button{
   width: 80%;
   border-radius: 0px;
+}
+.currency-selector-area {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  padding-bottom: 24px;
+}
+.currency-selector {
+  text-align: center;
+  width: 412px !important;
+  height: 30px;
+}
+
+.file-add-cta {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: end;
+}
+.file-add-cta span {
+  width: 26%;
+}
+
+.file-add-cta span .input-group {
+  margin-left: 0px !important;
+}
+.craete-file-area {
+  padding: 20px;
+
 }
 

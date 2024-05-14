@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import Link from "next/link"
@@ -10,7 +11,7 @@ const SideBar = () => {
         <nav className="sidebar sidebar-offcanvas" id="sidebar">
           <ul className="nav">
             <li className="nav-item nav-profile">
-              <a href="#" className="nav-link">
+              <Link href="/dashboard" className="nav-link">
                 <div className="nav-profile-image">
                 <span className="font-weight-bold mb-2">{user?.given_name?.toUpperCase()}</span><br />
                   <span className="text-secondary text-small">{user?.email}</span>
@@ -22,7 +23,7 @@ const SideBar = () => {
                 
                 </div>
                 {/* <i className="mdi mdi-bookmark-check text-success nav-profile-badge" /> */}
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" href="/dashboard">
@@ -32,23 +33,23 @@ const SideBar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <Link className="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <span className="menu-title">File Store</span>
                 <i className="menu-arrow" />
                 <i className="fa fa-folder-o" />
                 
                
-              </a>
+              </Link>
               <div className="collapse" id="ui-basic">
                 <ul className="nav flex-column sub-menu">
                   <li className="nav-item">
-                    <a className="nav-link" href="pages/ui-features/buttons.html">Files</a>
+                    <Link className="nav-link" href="/dashboard/files">Files</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="pages/ui-features/dropdowns.html">Permissions</a>
+                    <Link className="nav-link" href="/dashboard/permissions">Permissions</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="pages/ui-features/typography.html">Recycle Bin</a>
+                    <Link className="nav-link" href="/dashboard/recyleBin">Recycle Bin</Link>
                   </li>
                 </ul>
               </div>

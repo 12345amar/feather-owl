@@ -17,13 +17,12 @@ const UserAuth = () => {
         if (byPassAuth.includes(userPath)) {
             router.push(userPath) 
         }
-        if (!userPath && (!loading && !user || !user?.error?.message)) {
+        if ((!loading && !user || !user?.error?.message)) {
             const ecryptedAccessToken = sessionStorage.getItem('afo')
             if (ecryptedAccessToken) {
                 const accessToken = decryptToken(ecryptedAccessToken, encryptKey.LOGIN_SECRET)
                 dispatch(login({ accessToken, isDeveloper: true, isAuthCheck: true }))
             }
-            router.push("/login") 
         }
     }, [userPath])
     

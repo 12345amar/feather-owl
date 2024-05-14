@@ -1,28 +1,43 @@
 import React, { useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { currencySymbol } from '@/utils/constants';
 
-const CardSlider = ({ cards, subscriptionsCard, subsType }) => {
+const CardSlider = ({ cards, subscriptionsCard, subsType, selectedCurrency }) => {
   const carouselRef = useRef(null);
   const [isSelected, setIsSelected] = useState(false);
+  const [isSliderCtaDisplay, setIsSliderCtaDisplay] = useState(false)
 
   const handleSlide = (direction) => {
     carouselRef.current.scrollLeft += (direction === 'next' ? 300 : -300); // Adjust the scroll distance as per card width
   };
   
-
+console.log("subscriptionsCard", subscriptionsCard)
   const toggleCard = (index) => {
     setIsSelected(index);
   };
+  
+  const getAdditionalValue = (value, typeValue) => {
+    const splitValue = value.split('PriceAdditional')
+     if (splitValue?.[1]) {
+      const splitValueTwo = splitValue?.[1].split(typeValue)
+      return splitValueTwo[0] ?? '-'
+     }
+
+     return ''
+  }
   return (
     <div className="container-flex">
       <div className="row">
        
         
-        <div className="col-12 plans-price-slider" style={{ overflowX: 'auto' }} ref={carouselRef}>
+        <div className="col-12 plans-price-slider" style={{ overflowX: 'auto' }} ref={carouselRef} 
+              onMouseEnter={e => { setIsSliderCtaDisplay(true) }}
+              onMouseLeave={e => { setIsSliderCtaDisplay(false) }}>
           <div className="d-flex">
-          <span className="d-flex align-items-center prev-button" onClick={() => handleSlide('prev')}>
-          &lt;&lt;
+          <span style={{display: `${isSliderCtaDisplay ? 'block' : 'none'}`}} className="d-flex align-items-center prev-button" onClick={() => handleSlide('prev')}>
+          Prev
         </span>
+       
             {subscriptionsCard.map((scard, index) => (
                 
               <div key={index} className="col-md-4">
@@ -33,79 +48,71 @@ const CardSlider = ({ cards, subscriptionsCard, subsType }) => {
                   
                     <h5 className="card-title">{scard.subscriptionPlanName}</h5>
                     <h5 className="card-title">
-                        { subsType === "monthly" ? `${cards[index]?.monthlyPriceSubscription}$` : ''}
-                        { subsType === "quarterly" ? `${cards[index]?.quarterlyPriceSubscription}$` : ''}
-                        { subsType === "yearly" ? `${cards[index]?.yearlyPriceSubscription}$` : ''}
+                       {cards?.[index]?.[`${subsType}PriceSubscription`]}{currencySymbol[selectedCurrency]}
                         </h5>
                     <div className="features">
-                        <b>Features</b>
+                        {/* <b>Features</b> */}
                         <p>{scard.subscriptionPlanDescription}</p>
                     </div>
                     <div className="features-row row">
-                                <div className="col-md-6 heading-1"><b>Capacity</b></div>
+                                <div className="col-md-5 heading-1"><b>Capacity</b></div>
                                 <div className="col-md-3 heading-2"><b>Included</b></div>
-                                <div className="col-md-3 heading-3"><b>Buy More</b></div>
+                                <div className="col-md-4 heading-3"><b>Buy More</b></div>
                             
-                                <div className="col-md-6">Max HDD</div>
+                                <div className="col-md-5">Max HDD</div>
                                 <div className="col-md-3">{(Number(scard.maxByteTotalHDD)/1000000).toFixed(2)}MB</div>
-                                <div className="col-md-3">{}</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100MBHDD`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100MBHDD`, 'HDD')}</div>
 
-                                <div className="col-md-6">Max SSD</div>
+                                <div className="col-md-5">Max SSD</div>
                                 <div className="col-md-3">{(Number(scard.maxByteTotalSSD)/1000000).toFixed(2)}MB</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100MBSSD`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100MBSSD`, 'SSD')}</div>
 
-                                <div className="col-md-6">Max NVME</div>
+                                <div className="col-md-5">Max NVME</div>
                                 <div className="col-md-3">{(Number(scard.maxByteTotalNVME)/1000000).toFixed(2)}MB</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100MBNVME`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100MBNVME`, 'NVME')}</div>
 
-                                <div className="col-md-6">Max Users</div>
+                                <div className="col-md-5">Max Users</div>
                                 <div className="col-md-3">{scard.maxUsers}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditionalUser`]}{currencySymbol[selectedCurrency]} per User</div>
 
-                                <div className="col-md-6">Max Content Files</div>
+                                <div className="col-md-5">Max Content Files</div>
                                 <div className="col-md-3">{scard.maxContentFiles}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100ContentFiles`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100ContentFiles`, 'ContentFiles')}</div>
 
-                                <div className="col-md-6">Max Files</div>
+                                <div className="col-md-5">Max Files</div>
                                 <div className="col-md-3">{scard.maxFileStores}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditionalFileStore`]}{currencySymbol[selectedCurrency]} per file</div>
 
-                                <div className="col-md-6">Max Custom Thumbnails</div>
+                                <div className="col-md-5">Max Custom Thumbnails</div>
                                 <div className="col-md-3">{scard.maxCustomThumbnails}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100Thumbnails`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100Thumbnails`, 'Thumbnails')} Thumbnails</div>
 
-                                <div className="col-md-6">Max Stream Jobs</div>
+                                <div className="col-md-5">Max Stream Jobs</div>
                                 <div className="col-md-3">{scard.maxStreamJobs}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional100StreamJobs`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional100StreamJobs`, 'StreamJobs')} Stream Jobs</div>
 
-                                <div className="col-md-6">Max Sites</div>
+                                <div className="col-md-5">Max Sites</div>
                                 <div className="col-md-3">{scard.maxSites}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditionalSite`]}{currencySymbol[selectedCurrency]} per Site</div>
 
-                                <div className="col-md-6">Max Sites</div>
-                                <div className="col-md-3">{scard.maxSites}</div>
-                                <div className="col-md-3">Buy More</div>
-
-                                <div className="col-md-6">Max API Calls per Month</div>
+                                <div className="col-md-5">Max API Calls per Month</div>
                                 <div className="col-md-3">{scard.maxApiCallsPerMonth}</div>
-                                <div className="col-md-3">Buy More</div>
+                                <div className="col-md-4">{cards?.[index]?.[`${subsType}PriceAdditional1000ApiCallsPerMonth`]}{currencySymbol[selectedCurrency]} per {getAdditionalValue(`${subsType}PriceAdditional1000ApiCallsPerMonth`, 'ApiCallsPerMonth')} Api Calls</div>
                             
-                       
                     </div>
 
                     
 
-                    <div className="availability">
+                    {/* <div className="availability">
                         <b>Availability</b>
                         <div>Max deleted jobs retention days {scard.maxDeletedJobsRetentionDays}</div>
                         <div>Max deleted files retention days {scard.maxDeletedFilesRetentionDays}</div>
                         <div>{scard.setLocalQueueConnection ? 'Local Queue connection is available' : 'Local Queue connection is not available'}</div>
                         <div>{scard.setSiteQueueCleanupService ? 'Site Queue Cleanup Service is available' : 'Site Queue Cleanup Service is not available'}</div>
                        
-                    </div>
+                    </div> */}
 
                     <div className="comment">
-                        <b>Comment</b>
                         <p>{scard.comment}</p>
                     </div>
                   </div>
@@ -114,8 +121,8 @@ const CardSlider = ({ cards, subscriptionsCard, subsType }) => {
                 </div>
               </div>
             ))}
-             <span className="d-flex align-items-center justify-content-end next-button" onClick={() => handleSlide('next')}>
-             &gt;&gt;
+             <span style={{display: `${isSliderCtaDisplay ? 'block' : 'none'}`}} className="d-flex align-items-center justify-content-end next-button" onClick={() => handleSlide('next')}>
+             Next
         </span>
           </div>
         </div>
