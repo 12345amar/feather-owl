@@ -5,66 +5,18 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   DetailsList,
   DetailsListLayoutMode,
-  Selection,
   SelectionMode,
-  IColumn,
 } from "@fluentui/react/lib/DetailsList";
-import { mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { MarqueeSelection } from "@fluentui/react/lib/MarqueeSelection";
-import { Checkbox } from "@fluentui/react/lib/Checkbox";
+import { Spinner } from "@fluentui/react/lib/Spinner";
 
 import { getFileStorePermissions } from "@/services/api";
-import { dataSizeType } from "@/utils/constants";
-
-const classNames = mergeStyleSets({
-  fileIconHeaderIcon: {
-    padding: 0,
-    fontSize: "16px",
-  },
-  fileIconCell: {
-    textAlign: "center",
-    selectors: {
-      "&:before": {
-        content: ".",
-        display: "inline-block",
-        verticalAlign: "middle",
-        height: "100%",
-        width: "0px",
-        visibility: "hidden",
-      },
-    },
-  },
-  fileIconImg: {
-    verticalAlign: "middle",
-    maxHeight: "16px",
-    maxWidth: "16px",
-  },
-  controlWrapper: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  exampleToggle: {
-    display: "inline-block",
-    marginBottom: "10px",
-    marginRight: "30px",
-  },
-  selectionDetails: {
-    marginBottom: "20px",
-  },
-});
-const controlStyles = {
-  root: {
-    margin: "0 30px 20px 0",
-    maxWidth: "300px",
-  },
-};
 
 const Permissions = () => {
   const [items, setItems] = React.useState([]);
-  const [selection, setSelection] = React.useState(new Selection({}));
+  const [originalItems, setOriginalItems] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const { auth, fileStorePermissions } = useSelector((state) => state);
   const { loading: userLoading, user } = auth;
-  console.log(user);
   const { loading: filesPermissionLoading, userFileStorePermissions } =
     fileStorePermissions;
   const dispatch = useDispatch();
@@ -85,16 +37,36 @@ const Permissions = () => {
         };
       });
       setItems(items);
+      setOriginalItems(items);
     }
-  }, [dispatch, user?.username, userFileStorePermissions?.length]);
+  }, [userFileStorePermissions?.length]);
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    if (searchTerm === "") {
+      setItems(originalItems);
+    } else {
+      const searchedValues = items.filter((item) => {
+        return (
+          item.User.toLowerCase().includes(searchTerm) ||
+          item.FirstName.toLowerCase().includes(searchTerm) ||
+          item.LastName.toLowerCase().includes(searchTerm)
+        );
+      });
+
+      setItems(searchedValues);
+    }
+  };
 
   const columns = [
     {
       key: "column0",
       name: "Permission ID",
       fieldName: "PermissionID",
-      minWidth: 100,
-      maxWidth: 200,
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
     },
     {
@@ -104,29 +76,50 @@ const Permissions = () => {
       minWidth: 100,
       maxWidth: 200,
       isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
     },
     {
       key: "column2",
       name: "First Name",
       fieldName: "FirstName",
       minWidth: 100,
-      maxWidth: 200,
+      maxWidth: 100,
       isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
     },
     {
       key: "column3",
       name: "Last Name",
       fieldName: "LastName",
       minWidth: 100,
-      maxWidth: 200,
+      maxWidth: 100,
       isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
     },
     {
       key: "column4",
       name: "Comment",
       fieldName: "Comment",
       minWidth: 100,
-      maxWidth: 200,
+      maxWidth: 300,
       isResizable: true,
     },
     // {
@@ -149,8 +142,8 @@ const Permissions = () => {
       key: "column7",
       name: "Write",
       fieldName: "Write",
-      minWidth: 100,
-      maxWidth: 200,
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
       onRender: (item) => {
         return <input type="checkbox" checked={item.Write} />;
@@ -160,8 +153,8 @@ const Permissions = () => {
       key: "column8",
       name: "Download",
       fieldName: "Download",
-      minWidth: 100,
-      maxWidth: 200,
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
       onRender: (item) => {
         return <input type="checkbox" checked={item.Download} />;
@@ -171,8 +164,8 @@ const Permissions = () => {
       key: "column9",
       name: "Upload",
       fieldName: "Upload",
-      minWidth: 100,
-      maxWidth: 200,
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
       onRender: (item) => {
         return <input type="checkbox" checked={item.Upload} />;
@@ -182,8 +175,8 @@ const Permissions = () => {
       key: "column10",
       name: "Delete",
       fieldName: "Delete",
-      minWidth: 100,
-      maxWidth: 200,
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
       onRender: (item) => {
         return (
@@ -221,42 +214,44 @@ const Permissions = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Recipient's username"
-                  aria-label="Recipient's username"
-                  aria-describedby="basic-addon2"
+                  placeholder="Search..."
+                  aria-label="Search"
+                  aria-describedby="Search"
+                  onChange={handleSearch}
+                  name="search"
+                  value={searchTerm}
                 />
-                <div className="input-group-append">
+                {/* <div className="input-group-append">
                   <button
                     className="btn btn-sm btn-gradient-primary py-3"
                     type="button"
                   >
                     Search
                   </button>
-                </div>
+                </div> */}
               </div>
             </span>
           </div>
           {filesPermissionLoading &&
           userLoading &&
           !userFileStorePermissions?.length ? (
-            <div style={{ height: "100vh", textAlign: "center" }}>
-              Loading...
-            </div>
+            // <div style={{ height: "100vh", textAlign: "center" }}>
+            <Spinner label="Loading..." />
           ) : (
-            <MarqueeSelection selection={selection}>
-              <DetailsList
-                items={items}
-                columns={columns}
-                setKey="set"
-                layoutMode={DetailsListLayoutMode.justified}
-                selection={SelectionMode.none}
-                selectionPreservedOnEmptyClick={true}
-                ariaLabelForSelectionColumn="Toggle selection"
-                ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-                checkButtonAriaLabel="select row"
-                compact
-              />
-            </MarqueeSelection>
+            // </div>
+            <DetailsList
+              items={items}
+              columns={columns}
+              setKey="none"
+              layoutMode={DetailsListLayoutMode.justified}
+              selection={SelectionMode.none}
+              selectionPreservedOnEmptyClick={true}
+              isHeaderVisible={true}
+              enterModalSelectionOnTouch={true}
+              ariaLabelForSelectionColumn="Toggle selection"
+              ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+              checkButtonAriaLabel="select row"
+            />
           )}
         </div>
       </div>
