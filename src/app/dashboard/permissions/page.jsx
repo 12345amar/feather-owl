@@ -60,6 +60,10 @@ const Permissions = () => {
     }
   };
 
+  const handleAddUser = () => {
+    console.log("Add User");
+  };
+
   const columns = [
     {
       key: "column0",
@@ -200,16 +204,6 @@ const Permissions = () => {
           <h4 className="card-title">File Store Permissions</h4>
           <div className="row file-add-cta">
             <span>
-              <button type="button" className="btn btn-info">
-                <Link
-                  href="/dashboard/files/create"
-                  style={{ color: "white", textDecoration: "none" }}
-                >
-                  <i className="fa fa-plus" /> Create New File Store
-                </Link>
-              </button>
-            </span>
-            <span>
               <div className="input-group">
                 <input
                   type="text"
@@ -230,15 +224,32 @@ const Permissions = () => {
                   </button>
                 </div> */}
               </div>
+              <div className="input-group">
+                <select placeholder="Select User">
+                  <option value="Select">Select User</option>
+                  {originalItems?.map((item) => {
+                    return (
+                      <option key={item.permissionID} value={item.permissionID}>
+                        {item.User}
+                      </option>
+                    );
+                  })}
+                </select>
+                <button
+                  className="btn btn-sm btn-gradient-primary py-3"
+                  type="button"
+                  onClick={handleAddUser}
+                >
+                  Add User
+                </button>
+              </div>
             </span>
           </div>
           {filesPermissionLoading &&
           userLoading &&
           !userFileStorePermissions?.length ? (
-            // <div style={{ height: "100vh", textAlign: "center" }}>
             <Spinner label="Loading..." />
           ) : (
-            // </div>
             <DetailsList
               items={items}
               columns={columns}
@@ -255,6 +266,12 @@ const Permissions = () => {
           )}
         </div>
       </div>
+      <dialog open>
+        <p>Greetings, one and all!</p>
+        <form method="dialog">
+          <button>OK</button>
+        </form>
+      </dialog>
     </div>
   );
 };
