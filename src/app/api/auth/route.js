@@ -32,52 +32,6 @@ const getAuthorizationCredentials = async () => {
  * @param {*} request
  * @returns user access_token
  */
-
-// Update the below fn to handle CORS issue
-// export async function POST(request) {
-//   try {
-//     const requestParams = await request.json();
-//     console.log("=====requestParams", requestParams);
-//     const { username, password } = requestParams;
-//     if (!username) {
-//       console.error("Auth Loaded: ", errorMessage.usernameRequired);
-//       return NextResponse.json({
-//         error: { message: errorMessage.usernameRequired },
-//       });
-//     }
-//     if (!password) {
-//       console.error("Auth Loaded: ", errorMessage.passwordRequired);
-//       return NextResponse.json({
-//         error: { message: errorMessage.passwordRequired },
-//       });
-//     }
-//     const { grantType, scope, authTokenUrl, basicAuthCredential } =
-//       await getAuthorizationCredentials();
-//     console.log("====run here");
-//     const headers = {
-//       "Content-Type": "application/x-www-form-urlencoded",
-//       Authorization: `Basic ${basicAuthCredential}`,
-//     };
-//     const body = new URLSearchParams();
-//     body.append("grant_type", grantType);
-//     body.append("username", username);
-//     body.append("password", password);
-//     body.append("scope", scope);
-//     console.log("==========================>", headers, body);
-//     const response = await fetch(authTokenUrl, {
-//       method: "POST",
-//       headers,
-//       body,
-//     });
-//     const result = response.json();
-//     console.error("Auth Loaded Success:", result);
-//     return NextResponse.json(result);
-//   } catch (error) {
-//     console.error("Auth Loaded Error:", error);
-//     return NextResponse.json(error);
-//   }
-// }
-
 // Assuming cors is imported: import cors from 'cors';
 export async function POST(request, response) {
   await Cors(request, response, {
@@ -124,7 +78,7 @@ export async function POST(request, response) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Auth Loaded Error:", error);
-    return NextResponse.status(500).json(error);
+    return NextResponse.status(500).json9(error);
   }
   // your handler logic here
 }
