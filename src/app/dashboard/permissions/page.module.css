@@ -1,10 +1,7 @@
 .permissionsContainer {
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    padding: 3rem;
-    width: 90%;
-    margin: 0 auto;
-    border-radius: 10px;
-    background-color: #f5fffa;
+    width: 100%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    border-radius: 0.5rem;
 }
 
 .container {
@@ -12,14 +9,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
 }
 
 .permissionsControl {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1rem;
     gap: 1rem;
 }
 
