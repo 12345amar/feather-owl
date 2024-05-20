@@ -274,7 +274,7 @@ export const getSubscriptions = createAsyncThunk(
   "subscription/getSubscriptions",
   async () => {
     try {
-      const response = await fetch(apiUrl.SUBSCRIPTION_PLANS, {
+      const response = await fetch(apiUrls.SUBSCRIPTION_PLANS, {
         method: "GET",
         headers: myHeaders(),
       });
@@ -299,13 +299,9 @@ export const getFileStorePermissions = createAsyncThunk(
   "fileStorePermissions/getFileStorePermissions",
   async () => {
     try {
-      const requestParams = JSON.stringify({
-        operation: "/filestorepermissions/",
-      });
-      const response = await fetch(PROXY_URL, {
-        method: "POST",
+      const response = await fetch(apiUrls.FILE_STORE_PERMISSIONS, {
+        method: "GET",
         headers: myHeaders(),
-        body: requestParams,
       });
       console.log(response, "response");
       const result = await response.json();
