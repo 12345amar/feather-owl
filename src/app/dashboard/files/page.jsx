@@ -1,21 +1,40 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getFileStores } from "@/services/api";
+import { getFileStores, deleteFileStores } from "@/services/api";
 import { dataSizeType } from "@/utils/constants";
+import Modal from "@/app/components/modal";
+import { CommonLoader } from "@/app/components/Loader";
 
 const Files = () => {
   const { auth, files } = useSelector((state) => state);
+  const [isModalShow, setIsModalShow] = useState(false);
+  const [fileDeleteId, setFileDeleteId] = useState("");
   const { loading: userLoading, user } = auth;
-  const { loading: filesLoading, fileStores } = files;
+  const { loading: filesLoading, fileStores, deleteFile } = files;
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStores());
   }, []);
-  console.log("====fileStore=====s", fileStores?.error?.message);
+  useEffect(() => {
+    console.log("========deleteFile", deleteFile);
+    if (!deleteFile?.error?.message) {
+      dispatch(getFileStores());
+    }
+    setIsModalShow(false);
+  }, [deleteFile]);
+
+  const deleteFileStoresEvent = (fileStoreID) => {
+    setFileDeleteId(fileStoreID);
+    setIsModalShow(true);
+  };
+
+  const deleteFileStoresModal = (fileStoreID) => {
+    dispatch(deleteFileStores(fileStoreID));
+  };
   return (
     <div className="col-lg-12 grid-margin stretch-card">
       <div className="card">
@@ -52,10 +71,22 @@ const Files = () => {
               </div>
             </span>
           </div>
-          {filesLoading && userLoading && !fileStores?.length ? (
-            <div style={{ height: "100vh", textAlign: "center" }}>
-              Loading...
+          {deleteFile?.error?.message && (
+            <div class="alert alert-danger" role="alert">
+              {deleteFile?.error?.message}
             </div>
+          )}
+          {deleteFile && deleteFile?.message && (
+            <div class="alert alert-success" role="alert">
+              {deleteFile?.message}
+            </div>
+          )}
+
+          {filesLoading || userLoading ? (
+            <>
+              <CommonLoader />
+              <span>Loading..</span>
+            </>
           ) : (
             <table className="table table-bordered">
               <thead>
@@ -105,6 +136,9 @@ const Files = () => {
                           <i
                             className="fa fa-trash-o"
                             style={{ marginLeft: "5px" }}
+                            onClick={() =>
+                              deleteFileStoresEvent(value.fileStoreID)
+                            }
                           />
                         </td>
                       </tr>
@@ -116,6 +150,11 @@ const Files = () => {
           )}
         </div>
       </div>
+      <Modal
+        deleteEvent={() => deleteFileStoresModal(fileDeleteId)}
+        cancelEvent={() => setIsModalShow(false)}
+        isModalShow={isModalShow}
+      />
     </div>
   );
 };

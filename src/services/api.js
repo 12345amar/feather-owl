@@ -6,7 +6,7 @@ import {
   encryptKey,
   parseJwt,
   decryptToken,
-} from "@/utils/capiUrlsonstants";
+} from "@/utils/constants";
 
 //const API_BASE_URL = "http://84.227.19.180"; // Replace with your API base URL
 const API_BASE_URL = "http://k8s.integration.feather-lab.com:32744";
@@ -228,7 +228,6 @@ export const createFileStores = createAsyncThunk(
         body: requestParams,
       });
       const result = response.json();
-      console.log("=========result");
       if (result) {
         console.log("loaded filestores sucess:");
         return result;
@@ -237,6 +236,32 @@ export const createFileStores = createAsyncThunk(
       return { error: { message: error?.message } };
     } catch (error) {
       console.error("api filestores:", error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+export const deleteFileStores = createAsyncThunk(
+  "files/deleteFileStores",
+  async (id) => {
+    try {
+      const url = `${apiUrls.FILE_STORES}&query=/${id}/`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: myHeaders(),
+      });
+      const result = await response.json();
+      if (result?.code === 200) {
+        console.log("loaded deleted filestores success:");
+        return result;
+      }
+      console.error("api deleted filestores:", "File records do not exist.");
+      return { error: { message: "Deleted File records do not exist." } };
+    } catch (error) {
+      console.error("api deleted filestores:", error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";
@@ -269,16 +294,6 @@ export const getSubscriptions = createAsyncThunk(
     }
   }
 );
-
-//   export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (email) => {
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/forgot-password`, { email });
-//       return response.data;
-//     } catch (error) {
-//       throw error.response.data;
-//     }
-//   });
-// Add other API service functions as needed
 
 export const getFileStorePermissions = createAsyncThunk(
   "fileStorePermissions/getFileStorePermissions",
