@@ -6,7 +6,7 @@ import {
   encryptKey,
   parseJwt,
   decryptToken,
-} from "@/utils/capiUrlsonstants";
+} from "@/utils/constants";
 
 //const API_BASE_URL = "http://84.227.19.180"; // Replace with your API base URL
 const API_BASE_URL = "http://k8s.integration.feather-lab.com:32744";
@@ -249,7 +249,7 @@ export const getSubscriptions = createAsyncThunk(
   "subscription/getSubscriptions",
   async () => {
     try {
-      const response = await fetch(apiUrl.SUBSCRIPTION_PLANS, {
+      const response = await fetch(apiUrls.SUBSCRIPTION_PLANS, {
         method: "GET",
         headers: myHeaders(),
       });
@@ -284,13 +284,9 @@ export const getFileStorePermissions = createAsyncThunk(
   "fileStorePermissions/getFileStorePermissions",
   async () => {
     try {
-      const requestParams = JSON.stringify({
-        operation: "/filestorepermissions/",
-      });
-      const response = await fetch(PROXY_URL, {
-        method: "POST",
+      const response = await fetch(apiUrls.FILE_STORE_PERMISSIONS, {
+        method: "GET",
         headers: myHeaders(),
-        body: requestParams,
       });
       console.log(response, "response");
       const result = await response.json();

@@ -7,11 +7,13 @@ import {
   DetailsListLayoutMode,
   SelectionMode,
 } from "@fluentui/react/lib/DetailsList";
+import { initializeIcons } from "@fluentui/react";
 import { Spinner } from "@fluentui/react/lib/Spinner";
 
 import { getFileStorePermissions } from "@/services/api";
 
 const Permissions = () => {
+  initializeIcons();
   const [items, setItems] = React.useState([]);
   const [originalItems, setOriginalItems] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -44,7 +46,6 @@ const Permissions = () => {
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-
     if (searchTerm === "") {
       setItems(originalItems);
     } else {
@@ -55,10 +56,35 @@ const Permissions = () => {
           item.LastName.toLowerCase().includes(searchTerm)
         );
       });
-
       setItems(searchedValues);
     }
   };
+
+  const handleSelectUser = (selectedUser) => {
+    console.log(selectedUser);
+    if (!selectedUser || !selectedUser.key || selectedUser.key === "Select") {
+      setItems(originalItems);
+      return;
+    }
+    const searchedValues = originalItems.filter((item) => {
+      return item.User.toLowerCase().includes(selectedUser?.text.toLowerCase());
+    });
+    setItems(searchedValues);
+  };
+
+  const options = React.useMemo(
+    () => [
+      {
+        key: "Select",
+        text: "Select",
+      },
+      {
+        key: user.username,
+        text: user.username,
+      },
+    ],
+    [user.username]
+  );
 
   const handleAddUser = () => {
     console.log("Add User");
@@ -197,7 +223,9 @@ const Permissions = () => {
       },
     },
   ];
-  return (
+  return userLoading || filesPermissionLoading ? (
+    <Spinner label="Loading..." />
+  ) : (
     <div className="col-lg-12 grid-margin stretch-card">
       <div className="card">
         <div className="card-body">
