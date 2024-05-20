@@ -8,6 +8,7 @@ import { getFileStores } from "@/services/api";
 import { dataSizeType } from "@/utils/constants";
 
 const Files = () => {
+  const router = useRouter();
   const { auth, files } = useSelector((state) => state);
   const { loading: userLoading, user } = auth;
   const { loading: filesLoading, fileStores } = files;
@@ -16,6 +17,7 @@ const Files = () => {
     dispatch(getFileStores());
   }, []);
   console.log("====fileStore=====s", fileStores?.error?.message);
+
   return (
     <div className="col-lg-12 grid-margin stretch-card">
       <div className="card">
@@ -92,8 +94,9 @@ const Files = () => {
                         <td> {dataSizeType(value.currentSizeInByte)} </td>
                         <td> {value.storagePool}</td>
                         <td>
-                          {" "}
-                          <i className="fa fa-cloud-upload" />{" "}
+                          <Link href={`/dashboard/upload/${value.fileStoreID}`}>
+                            <i className="fa fa-cloud-upload" />
+                          </Link>
                         </td>
                         <td>
                           {" "}
