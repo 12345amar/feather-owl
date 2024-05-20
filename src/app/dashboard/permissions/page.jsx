@@ -7,10 +7,24 @@ import {
   DetailsListLayoutMode,
   SelectionMode,
 } from "@fluentui/react/lib/DetailsList";
-import { initializeIcons } from "@fluentui/react";
+import {
+  Dropdown,
+  PrimaryButton,
+  SearchBox,
+  initializeIcons,
+} from "@fluentui/react";
+import styles from "./page.module.css";
+
 import { Spinner } from "@fluentui/react/lib/Spinner";
 
 import { getFileStorePermissions } from "@/services/api";
+
+const searchBoxStyles = {
+  root: { width: 300 },
+};
+const dropdownStyles = {
+  dropdown: { width: 300 },
+};
 
 const Permissions = () => {
   initializeIcons();
@@ -79,11 +93,11 @@ const Permissions = () => {
         text: "Select",
       },
       {
-        key: user.username,
-        text: user.username,
+        key: user?.username,
+        text: user?.username,
       },
     ],
-    [user.username]
+    [user?.username]
   );
 
   const handleAddUser = () => {
@@ -226,81 +240,48 @@ const Permissions = () => {
   return userLoading || filesPermissionLoading ? (
     <Spinner label="Loading..." />
   ) : (
-    <div className="col-lg-12 grid-margin stretch-card">
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">File Store Permissions</h4>
-          <div className="row file-add-cta">
-            <span>
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search..."
-                  aria-label="Search"
-                  aria-describedby="Search"
-                  onChange={handleSearch}
-                  name="search"
-                  value={searchTerm}
-                />
-                {/* <div className="input-group-append">
-                  <button
-                    className="btn btn-sm btn-gradient-primary py-3"
-                    type="button"
-                  >
-                    Search
-                  </button>
-                </div> */}
-              </div>
-              <div className="input-group">
-                <select placeholder="Select User">
-                  <option value="Select">Select User</option>
-                  {originalItems?.map((item) => {
-                    return (
-                      <option key={item.permissionID} value={item.permissionID}>
-                        {item.User}
-                      </option>
-                    );
-                  })}
-                </select>
-                <button
-                  className="btn btn-sm btn-gradient-primary py-3"
-                  type="button"
-                  onClick={handleAddUser}
-                >
-                  Add User
-                </button>
-              </div>
-            </span>
-          </div>
-          {filesPermissionLoading &&
-          userLoading &&
-          !userFileStorePermissions?.length ? (
-            <Spinner label="Loading..." />
-          ) : (
-            <DetailsList
-              items={items}
-              columns={columns}
-              setKey="none"
-              layoutMode={DetailsListLayoutMode.justified}
-              selection={SelectionMode.none}
-              selectionPreservedOnEmptyClick={true}
-              isHeaderVisible={true}
-              enterModalSelectionOnTouch={true}
-              ariaLabelForSelectionColumn="Toggle selection"
-              ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-              checkButtonAriaLabel="select row"
+    <section className={styles.permissionsContainer}>
+      <div className={styles.permissionContainer}>
+        <div>
+          <div className={styles.permissionsControl}>
+            <SearchBox
+              styles={searchBoxStyles}
+              placeholder="Search"
+              onEscape={(ev) => {
+                handleSearch("");
+              }}
+              onClear={(ev) => {
+                handleSearch("");
+              }}
+              onSearch={(newValue) => handleSearch(newValue)}
             />
-          )}
+            <div className={styles.permissionsControl_inner}>
+              <Dropdown
+                placeholder="Select User"
+                options={options}
+                styles={dropdownStyles}
+                onChange={(e, item) => handleSelectUser(item)}
+              />
+              <PrimaryButton text="Add User" onClick={handleAddUser} />
+            </div>
+          </div>
+        </div>
+        <div>
+          <DetailsList
+            items={items}
+            columns={columns}
+            setKey="none"
+            layoutMode={DetailsListLayoutMode.justified}
+            selectionPreservedOnEmptyClick={true}
+            isHeaderVisible={true}
+            enterModalSelectionOnTouch={true}
+            ariaLabelForSelectionColumn="Toggle selection"
+            ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+            checkButtonAriaLabel="select row"
+          />
         </div>
       </div>
-      <dialog open>
-        <p>Greetings, one and all!</p>
-        <form method="dialog">
-          <button>OK</button>
-        </form>
-      </dialog>
-    </div>
+    </section>
   );
 };
 
