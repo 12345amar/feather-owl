@@ -1,11 +1,8 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
 import React, { useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getFileStores } from "@/services/api";
-import { dataSizeType } from "@/utils/constants";
 
 const Files = () => {
   const { auth, files } = useSelector((state) => state);
