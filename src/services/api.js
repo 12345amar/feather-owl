@@ -6,11 +6,24 @@ import {
   encryptKey,
   parseJwt,
   decryptToken,
+  userType,
 } from "@/utils/constants";
 
 //const API_BASE_URL = "http://84.227.19.180"; // Replace with your API base URL
 const API_BASE_URL = "http://k8s.integration.feather-lab.com:32744";
+function buildParams(data) {
+  const params = new URLSearchParams();
 
+  Object.entries(data).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((value) => params.append(key, value.toString()));
+    } else {
+      params.append(key, value.toString());
+    }
+  });
+
+  return params.toString();
+}
 const myHeaders = () => {
   const myHeader = new Headers();
   const accessToken = sessionStorage.getItem("afo");
@@ -219,10 +232,14 @@ export const createFileStores = createAsyncThunk(
   async (params) => {
     try {
       const requestParams = JSON.stringify({
-        method: "post",
         ...params,
       });
-      const response = await fetch(apiUrls.FILE_STORES, {
+      let url = apiUrls.FILE_STORE_ADMINS;
+      if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
+        url = apiUrls.FILE_STORES;
+      }
+
+      const response = await fetch(url, {
         method: "POST",
         headers: myHeaders(),
         body: requestParams,

@@ -25,6 +25,16 @@ const fileSlice = createSlice({
   initialState,
   reducers: {
     // You can add more reducers for update and delete operations
+    clearError: (state) => {
+      state.error = null;
+    },
+    clearCreateFile: () => {
+      return {
+        createFile: null,
+        error: null,
+        loading: false,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getFileStores.fulfilled, (state, action) => {
@@ -51,5 +61,5 @@ const fileSlice = createSlice({
   },
 });
 
-export const {} = fileSlice.actions;
+export const { clearError, clearCreateFile } = fileSlice.actions;
 export default fileSlice.reducer;

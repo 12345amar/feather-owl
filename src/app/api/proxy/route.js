@@ -26,17 +26,25 @@ export async function POST(request) {
     const authToken = headersList.get("Authorization");
 
     const getParams = await request.json();
-    const getBody = JSON.stringify(getParams);
+    let formBody = [];
+    for (var property in getParams) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(getParams[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
     const url = `${process.env.API_URL}/${operation}/`;
-    const getHeader = { Authorization: authToken };
-    console.log("=====body", url, getBody, getHeader);
+    const getHeader = {
+      Authorization: authToken,
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    };
     const res = await fetch(url, {
       method: "POST",
       headers: getHeader,
-      body: getBody,
+      body: formBody,
     });
-    if (res && res.status === 200) {
+    if (res && (res.status === 200 || res.status === 201)) {
       const result = await res.json();
       return Response.json(result);
     }

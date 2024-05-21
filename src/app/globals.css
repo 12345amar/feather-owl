@@ -273,15 +273,11 @@ a {
   flex-direction: row;
   justify-content: end;
   align-items: end;
+  gap: 6px;
 }
 
-.file-add-cta span {
-  width: 26%;
-}
 
-.file-add-cta span .input-group {
-  margin-left: 0px !important;
-}
+
 
 .craete-file-area {
   padding: 20px;
@@ -404,4 +400,8 @@ a {
 
 .modal-off {
   display: hidden !important;
+}
+
+.file-add-cta span {
+  width: 100%;
 }
