@@ -1,10 +1,8 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
 import React, { useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { createFileStores } from "@/services/api";
+import { createFileStores, getFileStores } from "@/services/api";
 import { useForm } from "react-hook-form";
 
 const Files = () => {

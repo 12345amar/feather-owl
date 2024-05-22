@@ -152,7 +152,7 @@ const Files = () => {
                         <td> {dataSizeType(value.currentSizeInByte)} </td>
                         <td> {value.storagePool}</td>
                         <td>
-                          <Link href={`/dashboard/upload/${value.fileStoreID}`}>
+                          <Link href="/dashboard/files/upload">
                             <i className="fa fa-cloud-upload" />
                           </Link>
                         </td>
