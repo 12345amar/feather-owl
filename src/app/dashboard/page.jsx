@@ -1,6 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserSubscriptions } from "@/services/api";
+
 const Dashboard = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUserSubscriptions());
+  }, []);
   return (
     <div className="content-wrapper">
       <div className="page-header">

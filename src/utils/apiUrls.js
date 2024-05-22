@@ -8,5 +8,6 @@ export const apiUrls = {
   FILE_STORE_PERMISSIONS: `${PROXY_URL}?operation=filestorepermissions`,
   SUBSCRIPTIONS: `${PROXY_URL}?operation=subscriptions`,
   FILE_STORES: `${PROXY_URL}?operation=filestores`,
+  FILE_STORE_ADMINS: `${PROXY_URL}?operation=filestoreadmins`,
   CONTENT_UPLOAD: `${PROXY_URL}?operation=contentupload`,
 };

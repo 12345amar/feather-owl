@@ -16,7 +16,7 @@ const uploadContents = createSlice({
   extraReducers: (builder) => {
     builder.addCase(uploadContent.fulfilled, (state, action) => {
       state.loading = false;
-      state.userFileStorePermissions = action.payload;
+      state.contentupload = action.payload;
     });
     builder.addCase(uploadContent.pending, (state, action) => {
       state.loading = true;

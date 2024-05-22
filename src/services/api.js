@@ -6,11 +6,24 @@ import {
   encryptKey,
   parseJwt,
   decryptToken,
+  userType,
 } from "@/utils/constants";
 
 //const API_BASE_URL = "http://84.227.19.180"; // Replace with your API base URL
 const API_BASE_URL = "http://k8s.integration.feather-lab.com:32744";
+function buildParams(data) {
+  const params = new URLSearchParams();
 
+  Object.entries(data).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((value) => params.append(key, value.toString()));
+    } else {
+      params.append(key, value.toString());
+    }
+  });
+
+  return params.toString();
+}
 const myHeaders = () => {
   const myHeader = new Headers();
   const accessToken = sessionStorage.getItem("afo");
@@ -219,16 +232,19 @@ export const createFileStores = createAsyncThunk(
   async (params) => {
     try {
       const requestParams = JSON.stringify({
-        method: "post",
         ...params,
       });
-      const response = await fetch(apiUrls.FILE_STORES, {
+      let url = apiUrls.FILE_STORE_ADMINS;
+      if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
+        url = apiUrls.FILE_STORES;
+      }
+
+      const response = await fetch(url, {
         method: "POST",
         headers: myHeaders(),
         body: requestParams,
       });
       const result = response.json();
-      console.log("=========result");
       if (result) {
         console.log("loaded filestores sucess:");
         return result;
@@ -237,6 +253,32 @@ export const createFileStores = createAsyncThunk(
       return { error: { message: error?.message } };
     } catch (error) {
       console.error("api filestores:", error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+export const deleteFileStores = createAsyncThunk(
+  "files/deleteFileStores",
+  async (id) => {
+    try {
+      const url = `${apiUrls.FILE_STORES}&query=/${id}/`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: myHeaders(),
+      });
+      const result = await response.json();
+      if (result?.code === 200) {
+        console.log("loaded deleted filestores success:");
+        return result;
+      }
+      console.error("api deleted filestores:", "File records do not exist.");
+      return { error: { message: "Deleted File records do not exist." } };
+    } catch (error) {
+      console.error("api deleted filestores:", error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";
@@ -270,16 +312,6 @@ export const getSubscriptions = createAsyncThunk(
   }
 );
 
-//   export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (email) => {
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/forgot-password`, { email });
-//       return response.data;
-//     } catch (error) {
-//       throw error.response.data;
-//     }
-//   });
-// Add other API service functions as needed
-
 export const getFileStorePermissions = createAsyncThunk(
   "fileStorePermissions/getFileStorePermissions",
   async () => {
@@ -312,7 +344,6 @@ export const uploadContent = createAsyncThunk(
   async (params) => {
     try {
       console.log({
-        method: "post",
         ...params,
       });
       const requestParams = JSON.stringify(params);
@@ -326,7 +357,7 @@ export const uploadContent = createAsyncThunk(
       if (result) {
         console.log("loaded filestores success:");
         if (result.status === 415) {
-          return { status: 415, message: result.error };
+          return { error: { message: result.error } };
         } else {
           return result;
         }

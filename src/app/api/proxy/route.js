@@ -8,9 +8,11 @@ export async function GET(request) {
     const getHeader = { Authorization: authToken };
     const url = `${process.env.API_URL}/${operation}/`;
     const res = await fetch(url, { method: "GET", headers: getHeader });
-    const data = await res.json();
-    console.log("Server API: ", "/", operation, "/", res.status);
-    return Response.json(data);
+    if (res && res.status === 200) {
+      const result = await res.json();
+      return Response.json(result);
+    }
+    return Response.json({ error: res.statusText, status: res.status });
   } catch (error) {
     console.log("Server API: ", "/", error);
     return Response.json(error);
@@ -24,17 +26,25 @@ export async function POST(request) {
     const authToken = headersList.get("Authorization");
 
     const getParams = await request.json();
-    const getBody = JSON.stringify(getParams);
+    let formBody = [];
+    for (var property in getParams) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(getParams[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
     const url = `${process.env.API_URL}/${operation}/`;
-    const getHeader = { Authorization: authToken };
-    console.log("=====body", url, getBody, getHeader);
+    const getHeader = {
+      Authorization: authToken,
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    };
     const res = await fetch(url, {
       method: "POST",
       headers: getHeader,
-      body: getBody,
+      body: formBody,
     });
-    if (res && res.status === 200) {
+    if (res && (res.status === 200 || res.status === 201)) {
       const result = await res.json();
       return Response.json(result);
     }
