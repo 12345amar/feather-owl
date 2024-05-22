@@ -240,45 +240,49 @@ const Permissions = () => {
   return userLoading || filesPermissionLoading ? (
     <Spinner label="Loading..." />
   ) : (
-    <section className={styles.permissionsContainer}>
-      <div className={styles.permissionContainer}>
-        <div>
-          <div className={styles.permissionsControl}>
-            <SearchBox
-              styles={searchBoxStyles}
-              placeholder="Search"
-              onEscape={(ev) => {
-                handleSearch("");
-              }}
-              onClear={(ev) => {
-                handleSearch("");
-              }}
-              onSearch={(newValue) => handleSearch(newValue)}
-            />
-            <div className={styles.permissionsControl_inner}>
-              <Dropdown
-                placeholder="Select User"
-                options={options}
-                styles={dropdownStyles}
-                onChange={(e, item) => handleSelectUser(item)}
+    <section className="col-lg-12 grid-margin stretch-card">
+      <div className="card">
+        <div className="card-body">
+          <div className={styles.permissionContainer}>
+            <div>
+              <div className={styles.permissionsControl}>
+                <SearchBox
+                  styles={searchBoxStyles}
+                  placeholder="Search"
+                  onEscape={(ev) => {
+                    handleSearch("");
+                  }}
+                  onClear={(ev) => {
+                    handleSearch("");
+                  }}
+                  onSearch={(newValue) => handleSearch(newValue)}
+                />
+                <div className={styles.permissionsControl_inner}>
+                  <Dropdown
+                    placeholder="Select User"
+                    options={options}
+                    styles={dropdownStyles}
+                    onChange={(e, item) => handleSelectUser(item)}
+                  />
+                  <PrimaryButton text="Add User" onClick={handleAddUser} />
+                </div>
+              </div>
+            </div>
+            <div>
+              <DetailsList
+                items={items}
+                columns={columns}
+                setKey="none"
+                layoutMode={DetailsListLayoutMode.justified}
+                selectionPreservedOnEmptyClick={true}
+                isHeaderVisible={true}
+                enterModalSelectionOnTouch={true}
+                ariaLabelForSelectionColumn="Toggle selection"
+                ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+                checkButtonAriaLabel="select row"
               />
-              <PrimaryButton text="Add User" onClick={handleAddUser} />
             </div>
           </div>
-        </div>
-        <div>
-          <DetailsList
-            items={items}
-            columns={columns}
-            setKey="none"
-            layoutMode={DetailsListLayoutMode.justified}
-            selectionPreservedOnEmptyClick={true}
-            isHeaderVisible={true}
-            enterModalSelectionOnTouch={true}
-            ariaLabelForSelectionColumn="Toggle selection"
-            ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-            checkButtonAriaLabel="select row"
-          />
         </div>
       </div>
     </section>

@@ -13,6 +13,7 @@ import { PrimaryButton, SearchBox } from "@fluentui/react";
 import { clearCreateFile } from "@/redux/reducers/fileSlice";
 
 const Files = () => {
+  const router = useRouter();
   const { auth, files } = useSelector((state) => state);
   const [isModalShow, setIsModalShow] = useState(false);
   const [fileDeleteId, setFileDeleteId] = useState("");
@@ -151,8 +152,9 @@ const Files = () => {
                         <td> {dataSizeType(value.currentSizeInByte)} </td>
                         <td> {value.storagePool}</td>
                         <td>
-                          {" "}
-                          <i className="fa fa-cloud-upload" />{" "}
+                          <Link href={`/dashboard/upload/${value.fileStoreID}`}>
+                            <i className="fa fa-cloud-upload" />
+                          </Link>
                         </td>
                         <td>
                           {" "}
