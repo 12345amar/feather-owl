@@ -17,6 +17,15 @@ const Files = () => {
     dispatch(getFileStores());
   }, []);
 
+  // const handleFileUpload = (fileStoreId) => {
+  //   router.push({
+  //     pathname: "/dashboard/files/upload",
+  //     query: {
+  //       fileStoreId,
+  //     },
+  //   });
+  // };
+
   return (
     <div className="col-lg-12 grid-margin stretch-card">
       <div className="card">
@@ -93,7 +102,9 @@ const Files = () => {
                         <td> {dataSizeType(value.currentSizeInByte)} </td>
                         <td> {value.storagePool}</td>
                         <td>
-                          <Link href="/dashboard/files/upload">
+                          <Link
+                            href={`/dashboard/files/upload/${value.fileStoreID}`}
+                          >
                             <i className="fa fa-cloud-upload" />
                           </Link>
                         </td>
