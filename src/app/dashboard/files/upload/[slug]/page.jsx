@@ -57,10 +57,12 @@ const FileUpload = ({ params: { slug } }) => {
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    const buffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(buffer);
     const data = {
       contentName: file.name,
-      content: file,
+      content: fileBuffer,
       contentType: "photo",
       fileStore: `http://k8s.integration.feather-lab.com:32744/filestores/${selectedFile.key}/`,
       customCustomer:
