@@ -343,17 +343,16 @@ export const uploadContent = createAsyncThunk(
   "files/contentupload",
   async (params) => {
     try {
-      console.log({
-        ...params,
-      });
       const requestParams = JSON.stringify(params);
       const response = await fetch(apiUrls.CONTENT_UPLOAD, {
         method: "POST",
         headers: myHeaders(),
         body: requestParams,
       });
-      const result = response.json();
-      console.log("=========result");
+      const result = await response.json();
+      console.log({
+        result,
+      });
       if (result) {
         console.log("loaded filestores success:");
         if (result.status === 415) {
@@ -361,6 +360,34 @@ export const uploadContent = createAsyncThunk(
         } else {
           return result;
         }
+      }
+      console.error("api filestores:", error);
+      return { error: { message: error?.message } };
+    } catch (error) {
+      console.error("api filestores:", error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+export const getFileStoreRecovery = createAsyncThunk(
+  "files/filestorerecovery",
+  async () => {
+    const url = `${apiUrls.FILE_STORES_RECOVERY}/?subscriptionID=6&orderedByUser=8&storagePool=nfs`;
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: myHeaders(),
+      });
+      const result = await response.json();
+      console.log(result, "result");
+      if (result) {
+        console.log("loaded filestores success:");
+        return result;
       }
       console.error("api filestores:", error);
       return { error: { message: error?.message } };

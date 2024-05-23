@@ -1,162 +1,293 @@
 "use client";
-/* eslint-disable react/no-unescaped-entities */
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  DetailsList,
+  DetailsListLayoutMode,
+  SelectionMode,
+} from "@fluentui/react/lib/DetailsList";
+import {
+  Dropdown,
+  PrimaryButton,
+  SearchBox,
+  initializeIcons,
+} from "@fluentui/react";
+import styles from "./page.module.css";
+
+import { Spinner } from "@fluentui/react/lib/Spinner";
+
+import { getFileStoreRecovery } from "@/services/api";
+
+const searchBoxStyles = {
+  root: { width: 300 },
+};
+const dropdownStyles = {
+  dropdown: { width: 300 },
+};
 
 const RecycleBin = () => {
-  return (
-    <div className="col-lg-12 grid-margin stretch-card">
+  initializeIcons();
+  const [items, setItems] = React.useState([]);
+  const [originalItems, setOriginalItems] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const { auth, fileStoreRecover } = useSelector((state) => state);
+  const { loading: userLoading, user } = auth;
+  const { loading: fileStoreRecoverLoading, canRecoveredFiles } =
+    fileStoreRecover;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getFileStoreRecovery());
+    console.log(user);
+    if (canRecoveredFiles?.length) {
+      console.log("canRecoveredFiles", canRecoveredFiles);
+      // const items = canRecoveredFiles.map((item) => {
+      //   return {
+      //     PermissionID: item?.permissionID,
+      //     User: user?.username,
+      //     FirstName: user?.given_name?.split(" ")[0].toUpperCase(),
+      //     LastName: user?.family_name?.split(" ")[1].toUpperCase(),
+      //     Comment: item?.comment,
+      //     Write: item?.canWriteFiles,
+      //     Delete: item?.canDeleteFiles,
+      //     Upload: item?.canUploadFiles,
+      //     Download: item?.canDownloadFiles,
+      //   };
+      // });
+      // setItems(items);
+      // setOriginalItems(items);
+    }
+  }, [canRecoveredFiles?.length]);
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+    if (searchTerm === "") {
+      setItems(originalItems);
+    } else {
+      const searchedValues = items.filter((item) => {
+        return (
+          item.User.toLowerCase().includes(searchTerm) ||
+          item.FirstName.toLowerCase().includes(searchTerm) ||
+          item.LastName.toLowerCase().includes(searchTerm)
+        );
+      });
+      setItems(searchedValues);
+    }
+  };
+
+  const handleSelectUser = (selectedUser) => {
+    console.log(selectedUser);
+    if (!selectedUser || !selectedUser.key || selectedUser.key === "Select") {
+      setItems(originalItems);
+      return;
+    }
+    const searchedValues = originalItems.filter((item) => {
+      return item.User.toLowerCase().includes(selectedUser?.text.toLowerCase());
+    });
+    setItems(searchedValues);
+  };
+
+  const options = React.useMemo(
+    () => [
+      {
+        key: "Select",
+        text: "Select",
+      },
+      {
+        key: user?.username,
+        text: user?.username,
+      },
+    ],
+    [user?.username]
+  );
+
+  const handleAddUser = () => {
+    console.log("Add User");
+  };
+
+  const columns = [
+    {
+      key: "column0",
+      name: "Permission ID",
+      fieldName: "PermissionID",
+      minWidth: 50,
+      maxWidth: 50,
+      isResizable: true,
+    },
+    {
+      key: "column1",
+      name: "User",
+      fieldName: "User",
+      minWidth: 100,
+      maxWidth: 200,
+      isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
+    },
+    {
+      key: "column2",
+      name: "First Name",
+      fieldName: "FirstName",
+      minWidth: 100,
+      maxWidth: 100,
+      isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
+    },
+    {
+      key: "column3",
+      name: "Last Name",
+      fieldName: "LastName",
+      minWidth: 100,
+      maxWidth: 100,
+      isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
+    },
+    {
+      key: "column4",
+      name: "Comment",
+      fieldName: "Comment",
+      minWidth: 100,
+      maxWidth: 300,
+      isResizable: true,
+    },
+    // {
+    //   key: "column5",
+    //   name: "Remove",
+    //   fieldName: "Remove",
+    //   minWidth: 100,
+    //   maxWidth: 200,
+    //   isResizable: true,
+    // },
+    // {
+    //   key: "column6",
+    //   name: "Read",
+    //   fieldName: "Read",
+    //   minWidth: 100,
+    //   maxWidth: 200,
+    //   isResizable: true,
+    // },
+    {
+      key: "column7",
+      name: "Write",
+      fieldName: "Write",
+      minWidth: 50,
+      maxWidth: 50,
+      isResizable: true,
+      onRender: (item) => {
+        return <input type="checkbox" checked={item.Write} />;
+      },
+    },
+    {
+      key: "column8",
+      name: "Download",
+      fieldName: "Download",
+      minWidth: 50,
+      maxWidth: 50,
+      isResizable: true,
+      onRender: (item) => {
+        return <input type="checkbox" checked={item.Download} />;
+      },
+    },
+    {
+      key: "column9",
+      name: "Upload",
+      fieldName: "Upload",
+      minWidth: 50,
+      maxWidth: 50,
+      isResizable: true,
+      onRender: (item) => {
+        return <input type="checkbox" checked={item.Upload} />;
+      },
+    },
+    {
+      key: "column10",
+      name: "Delete",
+      fieldName: "Delete",
+      minWidth: 50,
+      maxWidth: 50,
+      isResizable: true,
+      onRender: (item) => {
+        return (
+          <input
+            type="checkbox"
+            checked={item.Delete}
+            style={{
+              "&checked": {
+                backgroundColor: "#023047",
+              },
+            }}
+          />
+        );
+      },
+    },
+  ];
+  return userLoading || fileStoreRecoverLoading ? (
+    <Spinner label="Loading..." />
+  ) : (
+    <section className="col-lg-12 grid-margin stretch-card">
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Bordered table</h4>
-          <p className="card-description">
-            {" "}
-            Add class <code>.table-bordered</code>
-          </p>
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th> # </th>
-                <th> First name </th>
-                <th> Progress </th>
-                <th> Amount </th>
-                <th> Deadline </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td> 1 </td>
-                <td> Herman Beck </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-success"
-                      role="progressbar"
-                      style={{ width: "25%" }}
-                      aria-valuenow={25}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $ 77.99 </td>
-                <td> May 15, 2015 </td>
-              </tr>
-              <tr>
-                <td> 2 </td>
-                <td> Messsy Adam </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-danger"
-                      role="progressbar"
-                      style={{ width: "75%" }}
-                      aria-valuenow={75}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $245.30 </td>
-                <td> July 1, 2015 </td>
-              </tr>
-              <tr>
-                <td> 3 </td>
-                <td> John Richards </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-warning"
-                      role="progressbar"
-                      style={{ width: "90%" }}
-                      aria-valuenow={90}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $138.00 </td>
-                <td> Apr 12, 2015 </td>
-              </tr>
-              <tr>
-                <td> 4 </td>
-                <td> Peter Meggik </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-primary"
-                      role="progressbar"
-                      style={{ width: "50%" }}
-                      aria-valuenow={50}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $ 77.99 </td>
-                <td> May 15, 2015 </td>
-              </tr>
-              <tr>
-                <td> 5 </td>
-                <td> Edward </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-danger"
-                      role="progressbar"
-                      style={{ width: "35%" }}
-                      aria-valuenow={35}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $ 160.25 </td>
-                <td> May 03, 2015 </td>
-              </tr>
-              <tr>
-                <td> 6 </td>
-                <td> John Doe </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-info"
-                      role="progressbar"
-                      style={{ width: "65%" }}
-                      aria-valuenow={65}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $ 123.21 </td>
-                <td> April 05, 2015 </td>
-              </tr>
-              <tr>
-                <td> 7 </td>
-                <td> Henry Tom </td>
-                <td>
-                  <div className="progress">
-                    <div
-                      className="progress-bar bg-warning"
-                      role="progressbar"
-                      style={{ width: "20%" }}
-                      aria-valuenow={20}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </td>
-                <td> $ 150.00 </td>
-                <td> June 16, 2015 </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className={styles.permissionContainer}>
+            <div>
+              <div className={styles.permissionsControl}>
+                <SearchBox
+                  styles={searchBoxStyles}
+                  placeholder="Search"
+                  onEscape={(ev) => {
+                    handleSearch("");
+                  }}
+                  onClear={(ev) => {
+                    handleSearch("");
+                  }}
+                  onSearch={(newValue) => handleSearch(newValue)}
+                />
+                <div className={styles.permissionsControl_inner}>
+                  <Dropdown
+                    placeholder="Select User"
+                    options={options}
+                    styles={dropdownStyles}
+                    onChange={(e, item) => handleSelectUser(item)}
+                  />
+                  <PrimaryButton text="Add User" onClick={handleAddUser} />
+                </div>
+              </div>
+            </div>
+            <div>
+              <DetailsList
+                items={items}
+                columns={columns}
+                setKey="none"
+                layoutMode={DetailsListLayoutMode.justified}
+                selectionPreservedOnEmptyClick={true}
+                isHeaderVisible={true}
+                enterModalSelectionOnTouch={true}
+                ariaLabelForSelectionColumn="Toggle selection"
+                ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+                checkButtonAriaLabel="select row"
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

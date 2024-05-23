@@ -49,6 +49,15 @@ const Files = () => {
     setIsModalShow(false);
   }, [deleteFile]);
 
+  // const handleFileUpload = (fileStoreId) => {
+  //   router.push({
+  //     pathname: "/dashboard/files/upload",
+  //     query: {
+  //       fileStoreId,
+  //     },
+  //   });
+  // };
+
   useEffect(() => {
     console.log("======createFile===list", createFile);
     if (createFile && createFile?.fileStoreID) {
@@ -154,7 +163,9 @@ const Files = () => {
                         <td> {dataSizeType(value.currentSizeInByte)} </td>
                         <td> {value.storagePool}</td>
                         <td>
-                          <Link href="/dashboard/files/upload">
+                          <Link
+                            href={`/dashboard/files/upload/${value.fileStoreID}`}
+                          >
                             <i className="fa fa-cloud-upload" />
                           </Link>
                         </td>

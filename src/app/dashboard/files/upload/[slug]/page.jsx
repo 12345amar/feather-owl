@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dropdown,
   PrimaryButton,
@@ -26,7 +26,7 @@ const searchBoxStyles = {
   root: { width: 300 },
 };
 
-const FileUpload = () => {
+const FileUpload = ({ params: { slug } }) => {
   initializeIcons();
   const { auth, files } = useSelector((state) => state);
   const { loading: userLoading, user } = auth;
@@ -37,25 +37,46 @@ const FileUpload = () => {
     key: "",
     text: "",
   });
+  const [fileUploadDetails, setFileUploadDetails] = useState({
+    fileName: "",
+    comment: "",
+  });
+
+  useEffect(() => {
+    fileStores.find((fileStore) => {
+      if (fileStore.fileStoreID === Number(slug)) {
+        setSelectedFile({
+          key: fileStore.fileStoreID,
+          text: fileStore.fileStoreName,
+        });
+      }
+    });
+  }, [fileStores.length]);
 
   const onChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    const buffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(buffer);
     const data = {
       contentName: file.name,
-      content: file,
+      content: fileBuffer,
       contentType: "photo",
-      fileStore: "http://k8s.integration.feather-lab.com:32744/filestores/35/",
+      fileStore: `http://k8s.integration.feather-lab.com:32744/filestores/${selectedFile.key}/`,
       customCustomer:
         "http://k8s.integration.feather-lab.com:32744/subscriptions/11/",
-      customOrder: "Hello World",
-      comment: "Hello World",
+      customOrder: fileUploadDetails.fileName,
+      comment: fileUploadDetails.comment,
     };
     console.log(data);
     dispatch(uploadContent(data));
     document.getElementById("Files").value = null;
+    setFileUploadDetails({
+      fileName: "",
+      comment: "",
+    });
   };
 
   const options = fileStores.map((fileStore) => {
@@ -81,6 +102,7 @@ const FileUpload = () => {
                 options={options}
                 styles={dropdownStyles}
                 onChange={(e, item) => handleSelectFile(item)}
+                selectedKey={Number(slug)}
               />
             </div>
             <div className="form-group">
@@ -100,10 +122,30 @@ const FileUpload = () => {
               />
             </div>
             <div className="form-group">
-              <TextField label="Add Tag Name/Value" />
+              <TextField
+                label="Add Tag Name/Value"
+                value={fileUploadDetails.fileName}
+                onChange={(e, newValue) => {
+                  setFileUploadDetails({
+                    ...fileUploadDetails,
+                    fileName: newValue,
+                  });
+                }}
+              />
             </div>
             <div className="form-group">
-              <TextField label="Comment" multiline rows={3} />
+              <TextField
+                label="Comment"
+                multiline
+                rows={3}
+                value={fileUploadDetails.comment}
+                onChange={(e, newValue) => {
+                  setFileUploadDetails({
+                    ...fileUploadDetails,
+                    comment: newValue,
+                  });
+                }}
+              />
             </div>
             <div className="form-group mt-5">
               <PrimaryButton onClick={handleUpload}>
