@@ -133,12 +133,13 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
   }
 });
 
-export const register = createAsyncThunk(
+export const userRegister = createAsyncThunk(
   "auth/register",
   async (requestParams) => {
+    JSON.stringify(requestParams);
     try {
       return await axios
-        .post(apiUrl.REGISTER_URL, requestParams)
+        .post(apiUrls.REGISTER_URL, requestParams)
         .then((response) => {
           return response.data;
         })

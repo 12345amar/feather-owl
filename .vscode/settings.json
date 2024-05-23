@@ -5,6 +5,9 @@
     "filestorepermissions",
     "filestorerecovery",
     "filestores",
+    "firstname",
+    "hookform",
+    "lastname",
     "priceplans",
     "subscriptionplans",
     "userregister"
