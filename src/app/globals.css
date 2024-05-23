@@ -405,3 +405,25 @@ a {
 .file-add-cta span {
   width: 100%;
 }
+
+.modal-content {
+  border-radius: 0px !important;
+  background-color: white !important;
+  border: 1px solid darkgray !important;
+}
+.modal-confirm h4 {
+  margin: 0px !important;
+}
+
+.edit-info-modal-cta {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.edit-info-modal-cta div {
+  width: 50%;
+}
+.edit-info-modal-cta div button {
+  width: 100%;
+}

@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getFileStores, deleteFileStores } from "@/services/api";
 import { dataSizeType } from "@/utils/constants";
-import Modal from "@/app/components/modal";
+import Modal from "@/app/components/modal/Index";
 import { CommonLoader } from "@/app/components/Loader";
 import { Spinner } from "@fluentui/react/lib/Spinner";
 import { PrimaryButton, SearchBox } from "@fluentui/react";
 import { clearCreateFile } from "@/redux/reducers/fileSlice";
+import EditInfo from "@/app/components/modal/EditInfo";
 
 const Files = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const Files = () => {
   const [isMessage, setIsMessage] = useState("");
   const [fileStoreList, setFileStoreList] = useState([]);
   const [searchName, setSearchName] = useState("");
+  const [isEditInfoModalShow, setIsEditInfoModalShow] = useState(true);
   const { loading: userLoading, user } = auth;
   const { loading: filesLoading, fileStores, deleteFile, createFile } = files;
   const dispatch = useDispatch();
@@ -184,6 +186,11 @@ const Files = () => {
         deleteEvent={() => deleteFileStoresModal(fileDeleteId)}
         cancelEvent={() => setIsModalShow(false)}
         isModalShow={isModalShow}
+      />
+      <EditInfo
+        handleFileStoreSubmit={() => handleFileStoreSubmit(fileDeleteId)}
+        cancelEvent={() => setIsEditInfoModalShow(false)}
+        isModalShow={isEditInfoModalShow}
       />
     </div>
   );
