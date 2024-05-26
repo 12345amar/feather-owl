@@ -1,14 +1,12 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import styles from "./page.module.css";
-import Link from "next/link"
+import Link from "next/link";
 
 export default function Home() {
-
   return (
     <main className={styles.main}>
-      
       <div className="row mt-4">
         <Link
           href="/login"
@@ -16,21 +14,16 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <h6>
-           Login 
-          </h6>
+          <h6>Login</h6>
         </Link>
         <Link
-          href="/signup"
+          href="/register"
           className="col-md-8"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <h6>
-            Registration 
-          </h6>
+          <h6>Registration</h6>
         </Link>
-
       </div>
       <div className={styles.center}>
         <Image
@@ -42,7 +35,6 @@ export default function Home() {
           priority
         />
       </div>
-    
     </main>
   );
 }

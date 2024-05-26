@@ -21,15 +21,16 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    console.log(request);
     const operation = request.nextUrl.searchParams.get("operation");
     const headersList = headers();
     const authToken = headersList.get("Authorization");
 
     const getParams = await request.json();
     let formBody = [];
-    for (var property in getParams) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(getParams[property]);
+    for (const property in getParams) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(getParams[property]);
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");

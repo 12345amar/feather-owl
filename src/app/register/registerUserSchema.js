@@ -1,20 +1,20 @@
 import { z } from "zod";
 
-export const SignUpUserSchema = z
+export const registerUserSchema = z
   .object({
-    userName: z
+    username: z
       .string({
         required_error: "Password is required",
       })
       .trim()
       .min(3, { message: "Please enter the username correctly" }),
-    firstName: z
+    first_name: z
       .string({
         required_error: "Please enter a valid firstname",
       })
       .trim()
       .min(3, { message: "Please enter the firstname correctly" }),
-    lastName: z
+    last_name: z
       .string({
         required_error: "Please enter a valid lastname",
       })
@@ -28,17 +28,17 @@ export const SignUpUserSchema = z
       .email({
         required_error: "Please enter a valid email address",
       }),
-    password: z
+    password1: z
       .string({
         required_error: "Please enter a valid password",
       })
-      .min(8, { message: "Password is too short" })
+      .min(4, { message: "Password is too short" })
       .max(20, { message: "Password is too long" }),
-    confirmPassword: z.string({
+    password2: z.string({
       required_error: "Please enter a valid password confirmation",
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password1 === data.password2, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path: ["password2"],
   });

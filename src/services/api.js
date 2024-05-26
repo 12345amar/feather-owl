@@ -74,6 +74,7 @@ const developerLogin = (paramsData) => {
     return { error: { message: "Access token is not correct." } };
   }
 };
+
 export const login = createAsyncThunk("/auth/login", async (requestParams) => {
   try {
     const { username, password, isDeveloper = false } = requestParams;
@@ -136,19 +137,24 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
 export const userRegister = createAsyncThunk(
   "auth/register",
   async (requestParams) => {
-    JSON.stringify(requestParams);
+    const stringifiedData = JSON.stringify(requestParams);
+    console.log(stringifiedData);
     try {
-      return await axios
-        .post(apiUrls.REGISTER_URL, requestParams)
-        .then((response) => {
-          return response.data;
-        })
-        .catch((error) => {
-          const message = error?.response?.data?.username?.[0]
-            ? error?.response?.data?.username?.[0]
-            : "Something went to wrong";
-          return { error: { message } };
-        });
+      console.log("We are gere");
+      const response = await fetch(apiUrls.REGISTER_URL, {
+        method: "POST",
+        headers: myHeaders(),
+        body: requestParams,
+      });
+      console.log("We are here");
+      console.log(response);
+      const result = response.json();
+      console.log(result);
+      if (result) {
+        return result;
+      }
+      console.error("api filestores:", error);
+      return { error: { message: error?.message } };
     } catch (error) {
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]

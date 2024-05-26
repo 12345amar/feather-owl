@@ -8,7 +8,7 @@ import Image from "next/image";
 
 import FormField from "../components/Form/FormField";
 import { userRegister } from "../../services/api";
-import { SignUpUserSchema } from "./signupSchema";
+import { registerUserSchema } from "./registerUserSchema";
 
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ const SignUp = () => {
     formState: { errors },
     setError,
   } = useForm({
-    resolver: zodResolver(SignUpUserSchema),
+    resolver: zodResolver(registerUserSchema),
   });
 
   const { loading, user, error } = useSelector((state) => state.auth);
@@ -27,9 +27,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
 
   const handleRegisterSubmit = async (data) => {
-    console.log(data);
-    const res = await dispatch(userRegister(data));
-    console.log(res);
+    dispatch(userRegister(data));
   };
 
   // useEffect(() => {
@@ -65,9 +63,9 @@ const SignUp = () => {
                 <FormField
                   type="text"
                   placeholder="Enter username"
-                  name="userName"
+                  name="username"
                   register={register}
-                  error={errors.userName}
+                  error={errors.username}
                 />
               </div>
               <div className="form-row">
@@ -76,9 +74,9 @@ const SignUp = () => {
                   <FormField
                     type="text"
                     placeholder="Enter first name"
-                    name="firstName"
+                    name="first_name"
                     register={register}
-                    error={errors.firstName}
+                    error={errors.first_name}
                   />
                 </div>
                 <div className="form-group col">
@@ -86,9 +84,9 @@ const SignUp = () => {
                   <FormField
                     type="text"
                     placeholder="Enter last name"
-                    name="lastName"
+                    name="last_name"
                     register={register}
-                    error={errors.lastName}
+                    error={errors.last_name}
                   />
                 </div>
               </div>
@@ -107,9 +105,9 @@ const SignUp = () => {
                 <FormField
                   type="password"
                   placeholder="Password"
-                  name="password"
+                  name="password1"
                   register={register}
-                  error={errors.password}
+                  error={errors.password1}
                 />
               </div>
               <div className="form-group">
@@ -117,9 +115,9 @@ const SignUp = () => {
                 <FormField
                   type="password"
                   placeholder="Confirm Password"
-                  name="confirmPassword"
+                  name="password2"
                   register={register}
-                  error={errors.confirmPassword}
+                  error={errors.password2}
                 />
               </div>
               <button type="submit" className="btn btn-primary">
