@@ -327,11 +327,8 @@ export const getFileStorePermissions = createAsyncThunk(
         method: "GET",
         headers: myHeaders(),
       });
-      console.log(response, "response");
       const result = await response.json();
-      console.log("=======", result);
       if (result?.length) {
-        console.log("loaded file store permissions success:");
         return result;
       }
       console.error("api filestores:", "File permissions do not exist.");
@@ -357,18 +354,14 @@ export const uploadContent = createAsyncThunk(
         body: requestParams,
       });
       const result = await response.json();
-      console.log({
-        result,
-      });
       if (result) {
-        console.log("loaded filestores success:");
         if (result.status === 415) {
           return { error: { message: result.error } };
         } else {
           return result;
         }
       }
-      console.error("api filestores:", error);
+      console.error(error);
       return { error: { message: error?.message } };
     } catch (error) {
       console.error("api filestores:", error);
@@ -399,7 +392,7 @@ export const getFileStoreRecovery = createAsyncThunk(
       console.error("api filestores:", error);
       return { error: { message: error?.message } };
     } catch (error) {
-      console.error("api filestores:", error);
+      console.error(error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";
@@ -407,3 +400,21 @@ export const getFileStoreRecovery = createAsyncThunk(
     }
   }
 );
+
+export const userProfile = createAsyncThunk("auth/userprofiles", async () => {
+  try {
+    const response = await fetch(apiUrls.USER_PROFILE, {
+      method: "GET",
+      headers: myHeaders(),
+    });
+    const result = response.json();
+    if (result) {
+      return result;
+    }
+    console.error(error);
+    return { error: { message: error?.message } };
+  } catch (error) {
+    console.error(error);
+    return { error: { message: error?.message } };
+  }
+});

@@ -11,4 +11,5 @@ export const apiUrls = {
   FILE_STORE_ADMINS: `${PROXY_URL}?operation=filestoreadmins`,
   CONTENT_UPLOAD: `${PROXY_URL}?operation=contentupload`,
   FILE_STORES_RECOVERY: `${PROXY_URL}?operation=filestorerecovery`,
+  USER_PROFILE: `${PROXY_URL}?operation=userprofiles`,
 };

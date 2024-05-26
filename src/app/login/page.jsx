@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
-import FormField from "../components/Form/FormField";
+import FormField from "../components/Form/FormField/FormField";
 import { login } from "../../services/api";
 import { LoginUserSchema } from "./loginSchema";
 

@@ -1,11 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
-import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
   DetailsList,
   DetailsListLayoutMode,
-  SelectionMode,
 } from "@fluentui/react/lib/DetailsList";
 import {
   Dropdown,
@@ -14,7 +12,6 @@ import {
   initializeIcons,
 } from "@fluentui/react";
 import styles from "./page.module.css";
-
 import { Spinner } from "@fluentui/react/lib/Spinner";
 
 import { getFileStorePermissions } from "@/services/api";
@@ -38,6 +35,7 @@ const Permissions = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStorePermissions());
+    console.log({ user, auth });
     if (userFileStorePermissions?.length) {
       const items = userFileStorePermissions.map((item) => {
         return {

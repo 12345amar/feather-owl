@@ -6,6 +6,7 @@ import fileSlice from "./fileSlice";
 import fileStorePermissions from "./fileStorePermissions";
 import uploadContents from "./contentUploadSlice";
 import fileStoreRecoverySlice from "./fileStoreRecoverySlice";
+import userProfileSlice from "./userProfileSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   fileStorePermissions,
   contentUpload: uploadContents,
   fileStoreRecover: fileStoreRecoverySlice,
+  userProfiles: userProfileSlice,
   // Add other reducers here
 });
 

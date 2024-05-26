@@ -4,7 +4,7 @@ export const registerUserSchema = z
   .object({
     username: z
       .string({
-        required_error: "Password is required",
+        required_error: "Username is required",
       })
       .trim()
       .min(3, { message: "Please enter the username correctly" }),

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 
-import FormField from "../components/Form/FormField";
+import FormField from "../components/Form/FormField/FormField";
 import { userRegister } from "../../services/api";
 import { registerUserSchema } from "./registerUserSchema";
 
