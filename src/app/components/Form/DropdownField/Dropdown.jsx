@@ -1,15 +1,22 @@
-const DropdownField = ({ name, options, register, disabled, ...props }) => {
+const DropdownField = ({
+  name,
+  options,
+  register,
+  disabled,
+  error,
+  ...props
+}) => {
   return (
     <>
       <select
         {...register(name)}
         {...props}
-        className={`form-control ${error ? "is-invalid" : ""} ${
+        className={`form-control p-3  ${error ? "is-invalid" : ""} ${
           disabled ? "disabled" : ""
         } `}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="text-dark">
             {option.text}
           </option>
         ))}

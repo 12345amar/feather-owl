@@ -12,7 +12,7 @@ import { registerUserSchema } from "./registerUserSchema";
 
 import Link from "next/link";
 
-const SignUp = () => {
+const Register = () => {
   const {
     register,
     handleSubmit,
@@ -27,14 +27,15 @@ const SignUp = () => {
   const dispatch = useDispatch();
 
   const handleRegisterSubmit = async (data) => {
+    delete data.password2;
     dispatch(userRegister(data));
   };
 
-  // useEffect(() => {
-  //   if (!user?.error?.message && user) {
-  //     router.push("/login");
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (!user?.error?.message && user) {
+      router.push("/login");
+    }
+  }, [router, user]);
 
   return (
     <div className="container">
@@ -105,9 +106,9 @@ const SignUp = () => {
                 <FormField
                   type="password"
                   placeholder="Password"
-                  name="password1"
+                  name="password"
                   register={register}
-                  error={errors.password1}
+                  error={errors.password}
                 />
               </div>
               <div className="form-group">
@@ -136,4 +137,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Register;

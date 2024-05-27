@@ -28,7 +28,7 @@ export const registerUserSchema = z
       .email({
         required_error: "Please enter a valid email address",
       }),
-    password1: z
+    password: z
       .string({
         required_error: "Please enter a valid password",
       })
@@ -38,7 +38,7 @@ export const registerUserSchema = z
       required_error: "Please enter a valid password confirmation",
     }),
   })
-  .refine((data) => data.password1 === data.password2, {
+  .refine((data) => data.password === data.password2, {
     message: "Passwords do not match",
     path: ["password2"],
   });

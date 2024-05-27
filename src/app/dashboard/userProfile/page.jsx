@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userProfile } from "@/services/api";
 import FormField from "../../components/Form/FormField/FormField";
 import { userProfileSchema } from "./userProfileSchema";
+import DropdownField from "@/app/components/Form/DropdownField/Dropdown";
+import { titleOptions } from "@/utils/constants";
 import styles from "./page.module.css";
 
 const UserProfile = () => {
@@ -46,8 +48,6 @@ const UserProfile = () => {
   const handleFormSubmission = async (data) => {
     console.log(data);
   };
-
-  const titleOptions = [];
 
   useEffect(() => {
     if (!authLoading && !authError && authUser) {
@@ -102,7 +102,13 @@ const UserProfile = () => {
                       register={register}
                       error={errors.title}
                     /> */}
-                    <DropdownField label />
+                    <DropdownField
+                      name="title"
+                      placeholder="Select Title"
+                      options={titleOptions}
+                      register={register}
+                      error={errors.title}
+                    />
                   </div>
                 </div>
                 <div className="form-row">
