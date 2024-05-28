@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getFileStores, deleteFileStores } from "@/services/api";
+import { getFileStores, deleteFileStores, updateFileStores } from "@/services/api";
 import { dataSizeType } from "@/utils/constants";
-import Modal from "@/app/components/modal";
+import Modal from "@/app/components/modal/Index";
 import { CommonLoader } from "@/app/components/Loader";
 import { Spinner } from "@fluentui/react/lib/Spinner";
 import { PrimaryButton, SearchBox } from "@fluentui/react";
 import { clearCreateFile } from "@/redux/reducers/fileSlice";
+import EditInfo from "@/app/components/modal/EditInfo";
 
 const Files = () => {
   const router = useRouter();
@@ -20,8 +21,10 @@ const Files = () => {
   const [isMessage, setIsMessage] = useState("");
   const [fileStoreList, setFileStoreList] = useState([]);
   const [searchName, setSearchName] = useState("");
+  const [isEditInfoModalShow, setIsEditInfoModalShow] = useState(false);
+  const [editFileStoreData, setEditFileStoreData] = useState({});
   const { loading: userLoading, user } = auth;
-  const { loading: filesLoading, fileStores, deleteFile, createFile } = files;
+  const { loading: filesLoading, fileStores, deleteFile, createFile, updateFile } = files;
   const dispatch = useDispatch();
   const route = useRouter();
   useEffect(() => {
@@ -39,7 +42,6 @@ const Files = () => {
     dropdown: { width: 300 },
   };
   useEffect(() => {
-    console.log("========deleteFile", deleteFile);
     if (!deleteFile?.error?.message) {
       setIsMessage(deleteFile?.message);
       dispatch(getFileStores());
@@ -47,26 +49,35 @@ const Files = () => {
     setIsModalShow(false);
   }, [deleteFile]);
 
-  // const handleFileUpload = (fileStoreId) => {
-  //   router.push({
-  //     pathname: "/dashboard/files/upload",
-  //     query: {
-  //       fileStoreId,
-  //     },
-  //   });
-  // };
+  useEffect(() => {
+    console.log("===updateFile", updateFile)
+    if (!updateFile?.error?.message) {
+      setIsMessage(updateFile?.message);
+      dispatch(getFileStores());
+    }
+    setIsEditInfoModalShow(false);
+  }, [updateFile]);
+  
+
 
   useEffect(() => {
-    console.log("======createFile===list", createFile);
     if (createFile && createFile?.fileStoreID) {
       setIsMessage("File Store has created successfully.");
       dispatch(clearCreateFile());
     }
   }, [createFile]);
+
   const deleteFileStoresEvent = (fileStoreID) => {
     setFileDeleteId(fileStoreID);
     setIsModalShow(true);
   };
+  
+  const editFileStoresEvent = (fileData) => {
+    setEditFileStoreData({
+          ...fileData
+    })
+    setIsEditInfoModalShow(true);
+  }
 
   const deleteFileStoresModal = (fileStoreID) => {
     dispatch(deleteFileStores(fileStoreID));
@@ -76,13 +87,11 @@ const Files = () => {
   };
   const handleSearch = (value) => {
     if (fileStores && fileStores.length && value) {
-      console.log("===filter value", value, fileStores);
       fileStores.filter(
         (fObject) =>
           fObject.fileStoreName.toLowerCase().includes(value.toLowerCase()) ||
           fObject.storagePool.toLowerCase().includes(value.toLowerCase())
       );
-      console.log("===filter", fileStores);
       setFileStoreList(fileStores);
     }
   };
@@ -115,6 +124,11 @@ const Files = () => {
           {deleteFile?.error?.message && (
             <div class="alert alert-danger" role="alert">
               {deleteFile?.error?.message}
+            </div>
+          )}
+           {updateFile?.error?.message && (
+            <div class="alert alert-danger" role="alert">
+              {updateFile?.error?.message}
             </div>
           )}
 
@@ -173,7 +187,10 @@ const Files = () => {
                         </td>
                         <td>
                           {" "}
-                          <i className="fa fa-pencil" />
+                          <i className="fa fa-pencil"
+                          onClick={() => {
+                            editFileStoresEvent(value)
+                          }} />
                           <i
                             className="fa fa-trash-o"
                             style={{ marginLeft: "5px" }}
@@ -195,6 +212,12 @@ const Files = () => {
         deleteEvent={() => deleteFileStoresModal(fileDeleteId)}
         cancelEvent={() => setIsModalShow(false)}
         isModalShow={isModalShow}
+      />
+      <EditInfo
+        // handleFileStoreSubmit={editFileStoresModal}
+        cancelEvent={() => setIsEditInfoModalShow(false)}
+        editFileStoreData={editFileStoreData}
+        isModalShow={isEditInfoModalShow}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import {
   getFileStores,
   createFileStores,
   deleteFileStores,
+  updateFileStores
 } from "@/services/api";
 
 /**
@@ -13,6 +14,7 @@ const initialState = {
   fileStores: [],
   createFile: null,
   deleteFile: null,
+  updateFile: null,
   error: null,
   loading: false,
 };
@@ -58,6 +60,16 @@ const fileSlice = createSlice({
     builder.addCase(deleteFileStores.pending, (state, action) => {
       state.loading = true;
     });
+
+    builder.addCase(updateFileStores.fulfilled, (state, action) => {
+      state.loading = false;
+      state.updateFile = action.payload;
+    });
+    builder.addCase(updateFileStores.pending, (state, action) => {
+      state.loading = true;
+    });
+
+    
   },
 });
 
