@@ -261,6 +261,50 @@ export const createFileStores = createAsyncThunk(
   }
 );
 
+export const updateFileStores = createAsyncThunk(
+  "files/updateFileStores",
+  async (params) => {
+    try {
+      
+    console.log(params)
+    let url = apiUrls.FILE_STORE_ADMINS;
+    if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
+      url = apiUrls.FILE_STORES;
+    }
+      url = `${url}&query=/${params?.id}/`
+      console.log(url)
+     
+      const requestParams = JSON.stringify({
+        fileStoreName: params?.fileStoreName,
+        subscriptionID: params?.subscriptionID
+      });
+      console.log("requestParams", requestParams, params?.id)
+     
+      
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: myHeaders(),
+        body: requestParams,
+      });
+      const result = await response.json();
+      if (result?.error) {
+        console.error("api update filestores:", result?.error);
+        return { error: { message: result?.error } };
+      }
+      console.log("loaded update filestores sucess:");
+      return result;
+    } catch (error) {
+      console.error("api update filestores:", error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+
+
 export const deleteFileStores = createAsyncThunk(
   "files/deleteFileStores",
   async (id) => {

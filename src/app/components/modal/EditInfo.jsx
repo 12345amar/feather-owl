@@ -1,16 +1,29 @@
 import React from 'react'
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFileStores } from "@/services/api";
 
 const EditInfo = ({
   cancelEvent = () => {},
-  handleFileStoreSubmit = () => {},
+  // handleFileStoreSubmit = () => {},
   isModalShow = false,
+  editFileStoreData = {}
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch();
+
+  const handleFileStoreSubmit = (formData) => {
+    const subscriptionID = `http://k8s.integration.feather-lab.com:32744/subscriptions/11/`;
+    const submitData =  {...formData, subscriptionID, id:  editFileStoreData?.fileStoreID}
+    console.log("======", submitData);
+
+    dispatch(updateFileStores(submitData));
+  }
+
   return (
     <>
       <div
@@ -25,7 +38,7 @@ const EditInfo = ({
               <div className="icon-box">
               <label className="col-sm-12 col-form-label">
                         Old Name of File Store
-                        <h4>Old FIle Name</h4>
+                        <h4>{editFileStoreData?.fileStoreName}</h4>
                       </label>
               </div>
 

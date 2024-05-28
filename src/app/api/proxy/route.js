@@ -33,7 +33,7 @@ export async function POST(request) {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-
+    console.log("====formBody", formBody)
     const url = `${process.env.API_URL}/${operation}/`;
     const getHeader = {
       Authorization: authToken,
@@ -44,6 +44,7 @@ export async function POST(request) {
       headers: getHeader,
       body: formBody,
     });
+    console.error("Server API: ", "/", operation, res.statusText);
     if (res && (res.status === 200 || res.status === 201)) {
       const result = await res.json();
       return Response.json(result);
@@ -68,6 +69,41 @@ export async function DELETE(request) {
       url = `${process.env.API_URL}/${operation}${queryParams}`;
     }
     const res = await fetch(url, { method: "DELETE", headers: getHeader });
+    if (res && res.status === 200) {
+      const result = await res.json();
+      return Response.json(result);
+    }
+
+    return Response.json({ error: res.statusText, status: res.status });
+  } catch (error) {
+    console.log("Server API: ", "/", error);
+    return Response.json({ error });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const queryParams = request.nextUrl.searchParams.get("query");
+
+    const operation = request.nextUrl.searchParams.get("operation");
+    const getParams = await request.json();
+    const headersList = headers();
+    const authToken = headersList.get("Authorization");
+    const getHeader = { Authorization: authToken };
+    let url = `${process.env.API_URL}/${operation}/`;
+    if (queryParams) {
+      url = `${process.env.API_URL}/${operation}${queryParams}`;
+    }
+    let formBody = [];
+    for (var property in getParams) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(getParams[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
+    const res = await fetch(url, { method: "PUT", headers: getHeader, body: formBody });
+    console.error("Server API: ", "/", operation, res.statusText);
     if (res && res.status === 200) {
       const result = await res.json();
       return Response.json(result);
