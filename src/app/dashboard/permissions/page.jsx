@@ -53,7 +53,13 @@ const Permissions = () => {
       setItems(items);
       setOriginalItems(items);
     }
-  }, [userFileStorePermissions?.length]);
+  }, [
+    auth,
+    dispatch,
+    user,
+    userFileStorePermissions,
+    userFileStorePermissions?.length,
+  ]);
 
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
