@@ -59,3 +59,30 @@ export {
   currencySymbol,
   dataSizeType,
 };
+
+export const titleOptions = [
+  {
+    value: "Mr.",
+    text: "Mr.",
+  },
+  {
+    value: "Ms.",
+    text: "Ms.",
+  },
+  {
+    value: "Mrs.",
+    text: "Mrs.",
+  },
+  {
+    value: "Miss",
+    text: "Miss",
+  },
+  {
+    value: "Dr.",
+    text: "Dr.",
+  },
+  {
+    value: "Prof.",
+    text: "Prof.",
+  },
+];

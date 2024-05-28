@@ -5,8 +5,13 @@
     "filestorepermissions",
     "filestorerecovery",
     "filestores",
+    "firstname",
+    "hookform",
+    "lastname",
     "priceplans",
+    "reduxjs",
     "subscriptionplans",
+    "userprofiles",
     "userregister"
   ]
 }

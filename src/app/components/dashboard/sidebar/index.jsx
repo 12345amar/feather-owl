@@ -30,13 +30,11 @@ const SideBar = () => {
     const li = parent.parentElement;
     const subMenu = li.querySelector(".collapse");
     const allToggles = document.querySelectorAll(".collapse.show");
-
     for (let i = 0; i < allToggles.length; i++) {
       if (allToggles[i] !== subMenu) {
         allToggles[i].classList.remove("show");
       }
     }
-
     subMenu.classList.toggle("show");
   };
 
@@ -44,7 +42,7 @@ const SideBar = () => {
     <nav className="sidebar sidebar-offcanvas" id="sidebar">
       <ul className="nav">
         <li className="nav-item nav-profile">
-          <Link href="/dashboard" className="nav-link">
+          <Link href="/dashboard/userProfile" className="nav-link">
             <div className="nav-profile-image">
               <span className="font-weight-bold mb-2">
                 {user?.given_name?.toUpperCase()}
@@ -72,8 +70,7 @@ const SideBar = () => {
             onClick={handleToggleNavigation}
           >
             <span className="menu-title">File Store</span>
-
-            <i className="fa fa-folder-o" />
+            <i className="fa fa-folder-o menu-icon" />
           </Link>
           <div className="collapse" id="ui-basic">
             <ul className="nav flex-column sub-menu">
@@ -88,7 +85,7 @@ const SideBar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="/dashboard/recyleBin">
+                <Link className="nav-link" href="/dashboard/recycleBin">
                   Recycle Bin
                 </Link>
               </li>
@@ -105,8 +102,7 @@ const SideBar = () => {
             onClick={handleContentToggleNavigation}
           >
             <span className="menu-title">Content</span>
-
-            <i className="fa fa-files-o" />
+            <i className="fa fa-files-o menu-icon" />
           </Link>
           <div className="collapse" id="ui-basic">
             <ul className="nav flex-column sub-menu">

@@ -9,8 +9,6 @@ import {
   userType,
 } from "@/utils/constants";
 
-//const API_BASE_URL = "http://84.227.19.180"; // Replace with your API base URL
-const API_BASE_URL = "http://k8s.integration.feather-lab.com:32744";
 function buildParams(data) {
   const params = new URLSearchParams();
 
@@ -35,9 +33,7 @@ const myHeaders = () => {
   return myHeader;
 };
 
-const getAutherizationCredentials = async () => {
-  // const username = 'jrui.oliveiralves@gmail.com'
-  // const password = 'wso2lab2024'
+const getAuthorizationCredentials = async () => {
   const clientId = "BoW7lx6l1INlMkj1kdv3cCBV0awa";
   const secretId = "tjrXCKbIvO_LXthl0S7_1lDrHfAa";
   const grantType = "password";
@@ -60,12 +56,12 @@ const developerLogin = (paramsData) => {
   try {
     if (paramsData?.accessToken) {
       const jwtTokenDecode = parseJwt(paramsData?.accessToken);
-      const ecryptedAccessToken = encryptToken(
+      const encryptedAccessToken = encryptToken(
         paramsData?.accessToken,
         encryptKey.LOGIN_SECRET
       );
       if (!paramsData?.isAuthCheck) {
-        sessionStorage.setItem("afo", ecryptedAccessToken);
+        sessionStorage.setItem("afo", encryptedAccessToken);
       }
 
       return { ...jwtTokenDecode, tokenExpireTime: 3600 };
@@ -74,6 +70,7 @@ const developerLogin = (paramsData) => {
     return { error: { message: "Access token is not correct." } };
   }
 };
+
 export const login = createAsyncThunk("/auth/login", async (requestParams) => {
   try {
     const { username, password, isDeveloper = false } = requestParams;
@@ -89,8 +86,7 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
       return { error: { message: errorMessage.passwordRequired } };
     }
     const { grantType, scope, authTokenUrl, basicAuthCredential } =
-      await getAutherizationCredentials();
-
+      await getAuthorizationCredentials();
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
     myHeaders.append("Authorization", `Basic ${basicAuthCredential}`);
@@ -99,25 +95,23 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
     urlencoded.append("username", username);
     urlencoded.append("password", password);
     urlencoded.append("scope", scope);
-
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: urlencoded,
       redirect: "follow",
     };
-
     return await fetch(authTokenUrl, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result?.access_token) {
           console.log("Login API:", parseJwt(result?.access_token));
           const jwtTokenDecode = parseJwt(result?.access_token);
-          const ecryptedAccessToken = encryptToken(
+          const encryptedAccessToken = encryptToken(
             result.access_token,
             encryptKey.LOGIN_SECRET
           );
-          sessionStorage.setItem("afo", ecryptedAccessToken);
+          sessionStorage.setItem("afo", encryptedAccessToken);
           return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in };
         }
         console.error("Login API:", result);
@@ -133,21 +127,24 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
   }
 });
 
-export const register = createAsyncThunk(
+export const userRegister = createAsyncThunk(
   "auth/register",
   async (requestParams) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const stringifiedData = JSON.stringify(requestParams);
     try {
-      return await axios
-        .post(apiUrl.REGISTER_URL, requestParams)
-        .then((response) => {
-          return response.data;
-        })
-        .catch((error) => {
-          const message = error?.response?.data?.username?.[0]
-            ? error?.response?.data?.username?.[0]
-            : "Something went to wrong";
-          return { error: { message } };
-        });
+      const response = await fetch(apiUrls.REGISTER_URL, {
+        method: "POST",
+        headers: myHeaders,
+        body: stringifiedData,
+        redirect: "follow",
+      });
+      const result = await response.json();
+      if (result) {
+        return result;
+      }
+      return { error: { message: error?.message } };
     } catch (error) {
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
@@ -176,6 +173,7 @@ export const getUserSubscriptions = createAsyncThunk(
     }
   }
 );
+
 export const getPricePlans = createAsyncThunk(
   "subscription/getPricePlans",
   async () => {
@@ -186,7 +184,7 @@ export const getPricePlans = createAsyncThunk(
       });
       const result = response.json();
       if (result) {
-        console.log("loaded pricePlans sucess:");
+        console.log("loaded pricePlans success:");
         return result;
       }
       console.error("api priceplans:", error);
@@ -212,7 +210,7 @@ export const getFileStores = createAsyncThunk(
       const result = await response.json();
       console.log("=======", result);
       if (result?.length) {
-        console.log("loaded filestores sucess:");
+        console.log("loaded filestores success:");
         return result;
       }
       console.error("api filestores:", "File records do not exist.");
@@ -246,7 +244,7 @@ export const createFileStores = createAsyncThunk(
       });
       const result = response.json();
       if (result) {
-        console.log("loaded filestores sucess:");
+        console.log("loaded filestores success:");
         return result;
       }
       console.error("api filestores:", error);
@@ -341,7 +339,7 @@ export const getSubscriptions = createAsyncThunk(
       });
       const result = response.json();
       if (result) {
-        console.log("loaded subscriptions sucess:");
+        console.log("loaded subscriptions success:");
         return result;
       }
       console.error("api subscriptions:", error);
@@ -364,11 +362,8 @@ export const getFileStorePermissions = createAsyncThunk(
         method: "GET",
         headers: myHeaders(),
       });
-      console.log(response, "response");
       const result = await response.json();
-      console.log("=======", result);
       if (result?.length) {
-        console.log("loaded file store permissions success:");
         return result;
       }
       console.error("api filestores:", "File permissions do not exist.");
@@ -394,18 +389,14 @@ export const uploadContent = createAsyncThunk(
         body: requestParams,
       });
       const result = await response.json();
-      console.log({
-        result,
-      });
       if (result) {
-        console.log("loaded filestores success:");
         if (result.status === 415) {
           return { error: { message: result.error } };
         } else {
           return result;
         }
       }
-      console.error("api filestores:", error);
+      console.error(error);
       return { error: { message: error?.message } };
     } catch (error) {
       console.error("api filestores:", error);
@@ -436,7 +427,51 @@ export const getFileStoreRecovery = createAsyncThunk(
       console.error("api filestores:", error);
       return { error: { message: error?.message } };
     } catch (error) {
-      console.error("api filestores:", error);
+      console.error(error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+export const userProfile = createAsyncThunk("auth/userprofiles", async () => {
+  try {
+    const response = await fetch(apiUrls.USER_PROFILE, {
+      method: "GET",
+      headers: myHeaders(),
+    });
+    const result = response.json();
+    if (result) {
+      return result;
+    }
+    console.error(error);
+    return { error: { message: error?.message } };
+  } catch (error) {
+    console.error(error);
+    return { error: { message: error?.message } };
+  }
+});
+
+export const createSubscription = createAsyncThunk(
+  "subscription/createSubscription",
+  async (params) => {
+    try {
+      const requestParams = JSON.stringify(params);
+      const response = await fetch(apiUrls.CREATE_SUBSCRIPTION_PLANS, {
+        method: "POST",
+        headers: myHeaders(),
+        body: requestParams,
+      });
+      const result = await response.json();
+      if (result) {
+        return result;
+      }
+      console.error(error);
+      return { error: { message: error?.message } };
+    } catch (error) {
+      console.error(error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";

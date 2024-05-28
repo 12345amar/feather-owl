@@ -1,14 +1,14 @@
 "use client";
-
-/* eslint-disable react/no-unescaped-entities */
-// App/Pages/index.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { login } from "../../services/api";
-import Error from "../components/Error";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+
+import FormField from "../components/Form/FormField/FormField";
+import { login } from "../../services/api";
+import { LoginUserSchema } from "./loginSchema";
 
 const Login = () => {
   const {
@@ -22,7 +22,10 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    setError,
+  } = useForm({
+    resolver: zodResolver(LoginUserSchema),
+  });
 
   useEffect(() => {
     if (!loading && user && !user?.error?.message) {
@@ -31,8 +34,7 @@ const Login = () => {
   }, [loading, user, apiError]);
 
   const handleLoginSubmit = (data) => {
-    const formData = { ...data }; // Get form data
-    dispatch(login(formData));
+    dispatch(login(data));
   };
   return (
     <div className="container login-container">
@@ -50,42 +52,24 @@ const Login = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit(handleLoginSubmit)}>
                 <div className="form-group">
-                  <label htmlFor="username">Username:</label>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text">
-                        <i className="fas fa-user"></i>
-                      </span>{" "}
-                      {/* Icon for username */}
-                    </div>
-                    <input
-                      {...register("username")}
-                      type="text"
-                      className="form-control"
-                      id="username"
-                      placeholder="Enter username"
-                    />
-                    {errors.username && <span>{username} is required</span>}
-                  </div>
+                  <label htmlFor="userName">Username:</label>
+                  <FormField
+                    type="text"
+                    placeholder="Enter username"
+                    name="userName"
+                    register={register}
+                    error={errors.userName}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="password">Password:</label>
-                  <div className="input-group">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text">
-                        <i className="fas fa-lock"></i>
-                      </span>{" "}
-                      {/* Icon for password */}
-                    </div>
-                    <input
-                      {...register("password")}
-                      type="password"
-                      className="form-control"
-                      id="password"
-                      placeholder="Enter password"
-                    />
-                    {errors.password && <span>{password} is required</span>}
-                  </div>
+                  <FormField
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    register={register}
+                    error={errors.password}
+                  />
                 </div>
                 <button type="submit" className="btn btn-primary btn-block">
                   Login
@@ -97,7 +81,7 @@ const Login = () => {
             </div>
             <div className="card-footer text-center">
               <p className="mb-0">
-                Don't have an account? <Link href="/signup">Sign up</Link>
+                Don&apos;t have an account? <Link href="/signup">Sign up</Link>
               </p>
             </div>
           </div>
