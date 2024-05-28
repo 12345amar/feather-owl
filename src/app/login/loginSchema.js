@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const LoginUserSchema = z.object({
-  userName: z
+  username: z
     .string({
       required_error: "Please enter a valid username",
     })

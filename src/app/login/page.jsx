@@ -27,11 +27,11 @@ const Login = () => {
     resolver: zodResolver(LoginUserSchema),
   });
 
-  useEffect(() => {
-    if (!loading && user && !user?.error?.message) {
-      router.push("/plansAndPrices");
-    }
-  }, [loading, user, apiError]);
+  // useEffect(() => {
+  //   if (!loading && user && !user?.error?.message) {
+  //     router.push("/plansAndPrices");
+  //   }
+  // }, [loading, user, apiError, router]);
 
   const handleLoginSubmit = (data) => {
     dispatch(login(data));
@@ -44,7 +44,7 @@ const Login = () => {
             <div className="card-header">
               <h3 className="text-center">Login</h3>
               {user?.error?.message && (
-                <div class="alert alert-danger" role="alert">
+                <div className="alert alert-danger" role="alert">
                   {user?.error?.message}
                 </div>
               )}
@@ -52,11 +52,11 @@ const Login = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit(handleLoginSubmit)}>
                 <div className="form-group">
-                  <label htmlFor="userName">Username:</label>
+                  <label htmlFor="username">Username:</label>
                   <FormField
                     type="text"
                     placeholder="Enter username"
-                    name="userName"
+                    name="username"
                     register={register}
                     error={errors.userName}
                   />

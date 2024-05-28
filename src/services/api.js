@@ -8,6 +8,28 @@ import {
   decryptToken,
   userType,
 } from "@/utils/constants";
+import https from "https";
+
+// return await fetch(authTokenUrl, requestOptions)
+//   .then((response) => response.json())
+//   .then((result) => {
+//     if (result?.access_token) {
+//       console.log("Login API:", parseJwt(result?.access_token));
+//       const jwtTokenDecode = parseJwt(result?.access_token);
+//       const encryptedAccessToken = encryptToken(
+//         result.access_token,
+//         encryptKey.LOGIN_SECRET
+//       );
+//       sessionStorage.setItem("afo", encryptedAccessToken);
+//       return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in };
+//     }
+//     console.error("Login API:", result);
+//     return { error: { message: result?.error_description } };
+//   })
+//   .catch((error) => {
+//     console.error("Login API:", error);
+//     return { error: { message: error.error_description } };
+//   });
 
 function buildParams(data) {
   const params = new URLSearchParams();
@@ -41,7 +63,7 @@ const getAuthorizationCredentials = async () => {
   const authTokenUrl =
     "https://is.integration.feather-lab.com:9444/oauth2/token";
   const basicAuthCredential = btoa(clientId + ":" + secretId);
-
+  //"Qm9XN2x4NmwxSU5sTWtqMWtkdjNjQOJWMGF3YTp0anJYQ0tiSXZPXOxYdGhsMFM3XzFsRHJIZkFh";
   return {
     clientId,
     secretId,
@@ -71,18 +93,16 @@ const developerLogin = (paramsData) => {
   }
 };
 
-export const login = createAsyncThunk("/auth/login", async (requestParams) => {
+export const login = createAsyncThunk("auth/login", async (requestParams) => {
   try {
     const { username, password, isDeveloper = false } = requestParams;
     if (isDeveloper) {
       return await developerLogin(requestParams);
     }
     if (!username) {
-      console.error("Login API:", errorMessage.usernameRequired);
       return { error: { message: errorMessage.usernameRequired } };
     }
     if (!password) {
-      console.error("Login API:", errorMessage.passwordRequired);
       return { error: { message: errorMessage.passwordRequired } };
     }
     const { grantType, scope, authTokenUrl, basicAuthCredential } =
@@ -100,30 +120,19 @@ export const login = createAsyncThunk("/auth/login", async (requestParams) => {
       headers: myHeaders,
       body: urlencoded,
       redirect: "follow",
+      agent: new https.Agent({
+        rejectUnauthorized: false, // This will ignore SSL certificate errors
+      }),
     };
-    return await fetch(authTokenUrl, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result?.access_token) {
-          console.log("Login API:", parseJwt(result?.access_token));
-          const jwtTokenDecode = parseJwt(result?.access_token);
-          const encryptedAccessToken = encryptToken(
-            result.access_token,
-            encryptKey.LOGIN_SECRET
-          );
-          sessionStorage.setItem("afo", encryptedAccessToken);
-          return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in };
-        }
-        console.error("Login API:", result);
-        return { error: { message: result?.error_description } };
-      })
-      .catch((error) => {
-        console.error("Login API:", error);
-        return { error: { message: error.error_description } };
-      });
+    const response = await fetch(authTokenUrl, requestOptions);
+    const result = await response.json();
+    console.log("Login API:", result);
   } catch (error) {
     console.error("Login API:", error);
-    // throw error.response.data;
+    const message = error?.response?.data?.username?.[0]
+      ? error?.response?.data?.username?.[0]
+      : "Something went to wrong";
+    throw { error: { message } };
   }
 });
 
