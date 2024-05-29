@@ -272,22 +272,20 @@ export const updateFileStores = createAsyncThunk(
   "files/updateFileStores",
   async (params) => {
     try {
-      
-    console.log(params)
-    let url = apiUrls.FILE_STORE_ADMINS;
-    if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
-      url = apiUrls.FILE_STORES;
-    }
-      url = `${url}&query=/${params?.id}/`
-      console.log(url)
-     
+      console.log(params);
+      let url = apiUrls.FILE_STORE_ADMINS;
+      if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
+        url = apiUrls.FILE_STORES;
+      }
+      url = `${url}&query=/${params?.id}/`;
+      console.log(url);
+
       const requestParams = JSON.stringify({
         fileStoreName: params?.fileStoreName,
-        subscriptionID: params?.subscriptionID
+        subscriptionID: params?.subscriptionID,
       });
-      console.log("requestParams", requestParams, params?.id)
-     
-      
+      console.log("requestParams", requestParams, params?.id);
+
       const response = await fetch(url, {
         method: "PUT",
         headers: myHeaders(),
@@ -309,8 +307,6 @@ export const updateFileStores = createAsyncThunk(
     }
   }
 );
-
-
 
 export const deleteFileStores = createAsyncThunk(
   "files/deleteFileStores",
@@ -474,6 +470,7 @@ export const createSubscription = createAsyncThunk(
         body: requestParams,
       });
       const result = await response.json();
+      console.log(result);
       if (result) {
         return result;
       }

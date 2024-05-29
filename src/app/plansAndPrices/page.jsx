@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 /* eslint-disable react/no-unescaped-entities */
@@ -6,7 +7,11 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { getPricePlans, getSubscriptions } from "../../services/api";
+import {
+  getPricePlans,
+  getSubscriptions,
+  createSubscription,
+} from "../../services/api";
 import Error from "../components/Error";
 import CardSlider from "../components/plansPriceSlider";
 import { Spinner } from "@fluentui/react/lib/Spinner";
@@ -29,7 +34,7 @@ const PlansAndPrices = () => {
     if (subscriptions?.length === 0 && !loading) {
       dispatch(getSubscriptions());
     }
-  }, [dispatch, loading, pricePlans?.length, subscriptions?.length]);
+  }, [loading, pricePlans?.length, subscriptions?.length]);
 
   useEffect(() => {
     const currencyList = {
@@ -57,7 +62,22 @@ const PlansAndPrices = () => {
   const handleContinueClick = () => {
     console.log(getPriceUsdPlans);
     console.log(selectedPlan);
-    console.log("clicked");
+    const pricePlan = getPriceUsdPlans.find((item) =>
+      item?.pricePlanName.includes(selectedPlan?.subscriptionPlanName)
+    );
+    // Need to find how to get values for subscriptionBillingCountry and subscriptionBillingLanguage
+    const selectedSubscription = {
+      subscriptionName: selectedPlan?.subscriptionPlanName,
+      subscriptionSelectedPricePlan: pricePlan?.currencyID,
+      subscriptionBillingCountry: selectedCurrency,
+      subscriptionBillingLanguage: "en",
+      comment: pricePlan?.comment,
+      subscriptionBillingEmail: "", //Get it when user is logged in
+      subscriptionBillingPreference: pricePlansType,
+      enterpriseBillingRequestEmail: "?",
+    };
+    console.log(selectedSubscription);
+    dispatch(createSubscription(selectedSubscription));
   };
 
   return (
