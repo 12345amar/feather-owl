@@ -38,24 +38,14 @@ const PlansAndPrices = () => {
   useEffect(() => {
     dispatch(getPricePlans());
     dispatch(getSubscriptions());
-    if (userSubscriptions.length > 0) {
-      router.push("/dashboard");
-    }
-  }, [
-    dispatch,
-    pricePlans.length,
-    subscriptions.length,
-    userSubscriptions.length,
-    createSubscription.length,
-  ]);
+    dispatch(getUserSubscriptions());
+  }, [pricePlans.length, subscriptions.length]);
 
   useEffect(() => {
-    dispatch(getUserSubscriptions());
-    console.log(userSubscriptions);
     if (userSubscriptions.length > 0) {
       router.push("/dashboard");
     }
-  }, [dispatch, userSubscriptions.length]);
+  }, [userSubscriptions.length]);
 
   useEffect(() => {
     const currencyList = {
