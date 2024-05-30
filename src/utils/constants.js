@@ -128,8 +128,19 @@ export const titleOptions = [
   },
 ];
 
+/**
+ * Base URL from env
+ * @returns 
+ */
 export const getBaseUrl = () => {
-
-
   return process.env.NEXT_PUBLIC_BASE_URL
 }
+
+/**
+ * Subscribe APIs params link
+ */
+export const subscriptionLinks = {
+  pricePlanLink: `${process.env.NEXT_PUBLIC_API_URL}/priceplans`,
+  billingCountryLink:`${process.env.NEXT_PUBLIC_API_URL}/countries/1/`,
+  billingLanguageLink:`${process.env.NEXT_PUBLIC_API_URL}/languages/1/`,
+};

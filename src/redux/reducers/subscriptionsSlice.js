@@ -13,6 +13,7 @@ const initialState = {
   pricePlans: [],
   subscriptions: [],
   userSubscriptions: [],
+  createdSubscription: null,
   error: null,
   loading: false,
 };
@@ -55,7 +56,7 @@ const subscriptionsSlice = createSlice({
     });
     builder.addCase(createSubscription.fulfilled, (state, action) => {
       state.loading = false;
-      state.subscriptions = action.payload;
+      state.createdSubscription = action.payload;
     });
     builder.addCase(createSubscription.pending, (state, action) => {
       state.loading = true;

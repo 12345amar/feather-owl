@@ -7,31 +7,45 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@fluentui/react/lib/Spinner";
+
 import {
   getPricePlans,
   getSubscriptions,
   createSubscription,
+  getUserSubscriptions,
 } from "../../services/api";
 import Error from "../components/Error";
 import CardSlider from "../components/plansPriceSlider";
-import { Spinner } from "@fluentui/react/lib/Spinner";
+import { subscriptionLinks } from "../../utils/constants";
 
 const PlansAndPrices = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { subscriptions, pricePlans, loading } = useSelector(
-    (state) => state.subscription
-  );
+  const {
+    subscriptions,
+    pricePlans,
+    loading,
+    userSubscriptions,
+    createdSubscription,
+  } = useSelector((state) => state.subscription);
   const { auth } = useSelector((state) => state);
   const [getPriceUsdPlans, setGetPriceUsdPlans] = useState([]);
   const [pricePlansType, setPricePlansType] = useState("monthly");
   const [selectedCurrency, setSelectedCurrency] = useState("usd");
-  const [selectedPlan, setSelectedPlan] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState();
 
   useEffect(() => {
     dispatch(getPricePlans());
     dispatch(getSubscriptions());
-  }, [dispatch, pricePlans.length, subscriptions.length]);
+    dispatch(getUserSubscriptions());
+  }, [pricePlans.length, subscriptions.length]);
+
+  useEffect(() => {
+    if (userSubscriptions.length > 0) {
+      router.push("/dashboard");
+    }
+  }, [userSubscriptions.length]);
 
   useEffect(() => {
     const currencyList = {
@@ -56,7 +70,7 @@ const PlansAndPrices = () => {
     setSelectedCurrency(event.target.value);
   };
 
-  const handleContinueClick = React.useCallback(() => {
+  const handleContinueClick = () => {
     const pricePlan = getPriceUsdPlans.find((item) =>
       item?.pricePlanName.includes(selectedPlan?.subscriptionPlanName)
     );
@@ -68,27 +82,19 @@ const PlansAndPrices = () => {
         : pricePlansType === "yearly"
         ? "Y"
         : "";
-    console.log(pricePlan);
     const selectedSubscription = {
       subscriptionName: selectedPlan?.subscriptionPlanName,
-      subscriptionSelectedPricePlan: pricePlan?.currencyID,
-      subscriptionBillingCountry:
-        "http://k8s.integration.feather-lab.com:32744/countries/1/",
-      subscriptionBillingLanguage:
-        "http://k8s.integration.feather-lab.com:32744/languages/1/",
+      subscriptionSelectedPricePlan: `${subscriptionLinks.pricePlanLink}/${pricePlan?.pricePlanID}/`,
+      subscriptionBillingCountry: subscriptionLinks.billingCountryLink,
+      subscriptionBillingLanguage: subscriptionLinks.billingLanguageLink,
       comment: pricePlan?.comment,
       subscriptionBillingEmail: auth?.user?.email,
       subscriptionBillingPreference: billingPreference,
       enterpriseBillingRequestEmail: auth?.user?.email,
     };
     dispatch(createSubscription(selectedSubscription));
-  }, [
-    getPriceUsdPlans,
-    selectedPlan,
-    selectedCurrency,
-    pricePlansType,
-    dispatch,
-  ]);
+    router.push("/dashboard");
+  };
 
   return (
     <div className="price-plans">
@@ -142,7 +148,11 @@ const PlansAndPrices = () => {
             setSelectedPlan={setSelectedPlan}
           />
           <div className="continue-cta">
-            <button className="btn btn-primary" onClick={handleContinueClick}>
+            <button
+              className="btn btn-primary"
+              onClick={handleContinueClick}
+              disabled={!selectedPlan}
+            >
               Continue
             </button>
           </div>
