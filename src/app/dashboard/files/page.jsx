@@ -53,9 +53,11 @@ const Files = () => {
   useEffect(() => {
     console.log("===updateFile", updateFile)
     if (!updateFile?.error?.message) {
+      setIsMessage(updateFile?.message || "File updated.");
       dispatch(getFileStores());
     }
     setIsEditInfoModalShow(false);
+    setIsModalShow(false);
   }, [updateFile]);
   
 
@@ -80,7 +82,8 @@ const Files = () => {
   }
 
   const deleteFileStoresModal = (fileStoreID) => {
-    dispatch(deleteFileStores(fileStoreID));
+    const params = {deleteFileStore: true, id: fileStoreID, isDeleteFile: true}
+    dispatch(updateFileStores(params));
   };
   const handleCreateFile = () => {
     route.push("/dashboard/files/create");

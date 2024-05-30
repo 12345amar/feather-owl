@@ -57,7 +57,6 @@ export async function POST(request, response) {
     }
     const { grantType, scope, authTokenUrl, basicAuthCredential } =
       await getAuthorizationCredentials();
-    console.log("====run here");
     const headers = {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${basicAuthCredential}`,
