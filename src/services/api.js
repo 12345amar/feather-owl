@@ -1,3 +1,9 @@
+/**
+ * This file use for running all rest api from frontend where we submit form or make request to get data.
+ * There is only one proxy call to handle all request of rest api in backend side
+ * All APIs connected with redux toolkit and thunk 
+ * For calling any api of this file from frontend component we use useDispatch hooks from redux toolkit
+ */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { successMessage, errorMessage } from "@/utils/apiMessages";
 import { apiUrls } from "@/utils/apiUrls";
@@ -10,40 +16,10 @@ import {
 } from "@/utils/constants";
 import https from "https";
 
-// return await fetch(authTokenUrl, requestOptions)
-//   .then((response) => response.json())
-//   .then((result) => {
-//     if (result?.access_token) {
-//       console.log("Login API:", parseJwt(result?.access_token));
-//       const jwtTokenDecode = parseJwt(result?.access_token);
-//       const encryptedAccessToken = encryptToken(
-//         result.access_token,
-//         encryptKey.LOGIN_SECRET
-//       );
-//       sessionStorage.setItem("afo", encryptedAccessToken);
-//       return { ...jwtTokenDecode, tokenExpireTime: result?.expires_in };
-//     }
-//     console.error("Login API:", result);
-//     return { error: { message: result?.error_description } };
-//   })
-//   .catch((error) => {
-//     console.error("Login API:", error);
-//     return { error: { message: error.error_description } };
-//   });
-
-function buildParams(data) {
-  const params = new URLSearchParams();
-
-  Object.entries(data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((value) => params.append(key, value.toString()));
-    } else {
-      params.append(key, value.toString());
-    }
-  });
-
-  return params.toString();
-}
+/**
+ * Prepare header for proxy api call
+ * @returns 
+ */
 const myHeaders = () => {
   const myHeader = new Headers();
   const accessToken = sessionStorage.getItem("afo");
@@ -55,15 +31,17 @@ const myHeaders = () => {
   return myHeader;
 };
 
+/**
+ * Prepare all secret key to login WSO2 Auth
+ * @returns 
+ */
 const getAuthorizationCredentials = async () => {
-  const clientId = "BoW7lx6l1INlMkj1kdv3cCBV0awa";
-  const secretId = "tjrXCKbIvO_LXthl0S7_1lDrHfAa";
-  const grantType = "password";
-  const scope = "openid";
-  const authTokenUrl =
-    "https://is.integration.feather-lab.com:9444/oauth2/token";
+  const clientId = process.env.NEXT_PUBLIC_WSO2_CLIENT_ID;
+  const secretId = process.env.NEXT_PUBLIC_WSO2_SECRET_ID;
+  const grantType = process.env.NEXT_PUBLIC_WSO2_GRANT_TYPE;
+  const scope = process.env.NEXT_PUBLIC_WSO2_SCOPE;
+  const authTokenUrl = process.env.NEXT_PUBLIC_WSO2_AUTH_TOKEN_URL;
   const basicAuthCredential = btoa(clientId + ":" + secretId);
-  //"Qm9XN2x4NmwxSU5sTWtqMWtkdjNjQOJWMGF3YTp0anJYQ0tiSXZPXOxYdGhsMFM3XzFsRHJIZkFh";
   return {
     clientId,
     secretId,
@@ -74,6 +52,11 @@ const getAuthorizationCredentials = async () => {
   };
 };
 
+/**
+ * Login by access_token, please generat token from postman and get access_token
+ * @param {*} paramsData 
+ * @returns 
+ */
 const developerLogin = (paramsData) => {
   try {
     if (paramsData?.accessToken) {
@@ -93,6 +76,9 @@ const developerLogin = (paramsData) => {
   }
 };
 
+/**
+ * Login by user, will move in backend side
+ */
 export const login = createAsyncThunk("auth/login", async (requestParams) => {
   try {
     const { username, password, isDeveloper = false } = requestParams;
@@ -136,6 +122,9 @@ export const login = createAsyncThunk("auth/login", async (requestParams) => {
   }
 });
 
+/**
+ * User registration
+ */
 export const userRegister = createAsyncThunk(
   "auth/register",
   async (requestParams) => {
@@ -163,6 +152,9 @@ export const userRegister = createAsyncThunk(
   }
 );
 
+/**
+ * Get User subscription
+ */
 export const getUserSubscriptions = createAsyncThunk(
   "subscription/getUserSubscriptions",
   async () => {
@@ -183,6 +175,9 @@ export const getUserSubscriptions = createAsyncThunk(
   }
 );
 
+/**
+ * Get Price Plan List
+ */
 export const getPricePlans = createAsyncThunk(
   "subscription/getPricePlans",
   async () => {
@@ -208,6 +203,9 @@ export const getPricePlans = createAsyncThunk(
   }
 );
 
+/**
+ * Get File Store List
+ */
 export const getFileStores = createAsyncThunk(
   "files/getFileStores",
   async () => {
@@ -217,7 +215,6 @@ export const getFileStores = createAsyncThunk(
         headers: myHeaders(),
       });
       const result = await response.json();
-      console.log("=======", result);
       if (result?.length) {
         console.log("loaded filestores success:");
         return result;
@@ -234,6 +231,9 @@ export const getFileStores = createAsyncThunk(
   }
 );
 
+/**
+ * Create new file store
+ */
 export const createFileStores = createAsyncThunk(
   "files/createFileStores",
   async (params) => {
@@ -268,6 +268,9 @@ export const createFileStores = createAsyncThunk(
   }
 );
 
+/**
+ * Update file store name
+ */
 export const updateFileStores = createAsyncThunk(
   "files/updateFileStores",
   async (params) => {
@@ -306,6 +309,9 @@ export const updateFileStores = createAsyncThunk(
   }
 );
 
+/**
+ * Delete file store to moving in recycle bin
+ */
 export const deleteFileStores = createAsyncThunk(
   "files/deleteFileStores",
   async (id) => {
@@ -332,6 +338,9 @@ export const deleteFileStores = createAsyncThunk(
   }
 );
 
+/**
+ * Get Subscriptions list
+ */
 export const getSubscriptions = createAsyncThunk(
   "subscription/getSubscriptions",
   async () => {
@@ -357,6 +366,9 @@ export const getSubscriptions = createAsyncThunk(
   }
 );
 
+/**
+ * Get file store permissions
+ */
 export const getFileStorePermissions = createAsyncThunk(
   "fileStorePermissions/getFileStorePermissions",
   async () => {
@@ -382,7 +394,9 @@ export const getFileStorePermissions = createAsyncThunk(
 );
 
  
-
+/**
+ * Upload content in file store
+ */
 export const uploadContent = createAsyncThunk(
   "files/contentupload",
   async (params) => {
@@ -413,18 +427,19 @@ export const uploadContent = createAsyncThunk(
   }
 );
 
+/**
+ * Get File Store recover by admin
+ */
 export const getFileStoreRecovery = createAsyncThunk(
   "filestorerecovery/getFileStoreRecovery",
   async () => {
     const url = `${apiUrls.FILE_STORES_RECOVERY}`;
-    console.log(url);
     try {
       const response = await fetch(url, {
         method: "GET",
         headers: myHeaders(),
       });
       const result = await response.json();
-      console.log(result, "result");
       if (result) {
         console.log("loaded filestores success:");
         return result;
@@ -441,17 +456,16 @@ export const getFileStoreRecovery = createAsyncThunk(
   }
 );
 
+/**
+ * Get File store recover by user
+ */
 export const updateFileStoreRecovery = createAsyncThunk(
   "filestorerecovery/updateFileStoreRecovery",
   async (params) => {
-    
-    console.log("====requestParams, id", params, params?.id)
-    
     const url = `${apiUrls.FILE_STORES_RECOVERY}&query=/${params?.id}/`;
     const requestParams = JSON.stringify({
       recoverFileStore: params.recoverFileStore
     });
-    console.log("====requestParams, id====>", requestParams, params?.id, url)
     try {
       const response = await fetch(url, {
         method: "PATCH",
@@ -459,7 +473,6 @@ export const updateFileStoreRecovery = createAsyncThunk(
         body: requestParams,
       });
       const result = await response.json();
-      console.log(result, "result");
       if (result?.code === 200) {
         console.log("loaded recover filestores success:");
         return result;
@@ -476,6 +489,9 @@ export const updateFileStoreRecovery = createAsyncThunk(
   }
 );
 
+/**
+ * Get User profile
+ */
 export const userProfile = createAsyncThunk("auth/userprofiles", async () => {
   try {
     const response = await fetch(apiUrls.USER_PROFILE, {
@@ -494,19 +510,20 @@ export const userProfile = createAsyncThunk("auth/userprofiles", async () => {
   }
 });
 
+/**
+ * Subscribe plans for that users
+ */
 export const createSubscription = createAsyncThunk(
   "subscription/createSubscription",
   async (params) => {
     try {
       const requestParams = JSON.stringify(params);
-      console.log(requestParams);
       const response = await fetch(apiUrls.CREATE_SUBSCRIPTION_PLANS, {
         method: "POST",
         headers: myHeaders(),
         body: requestParams,
       });
       const result = await response.json();
-      console.log(result);
       if (result) {
         return result;
       }

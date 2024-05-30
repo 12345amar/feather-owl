@@ -2,6 +2,7 @@ import { Providers } from "../redux/providers";
 import UserAuth from "./auth/UserAuth";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { getBaseUrl } from "@/utils/constants";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -14,32 +15,22 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <head>
         <title>Feather Owl</title>
+       
         <link
           rel="stylesheet"
-          href="assets/vendors/mdi/css/materialdesignicons.min.css"
+          href={`${getBaseUrl()}assets/vendors/ti-icons/css/themify-icons.css`}
         />
         <link
           rel="stylesheet"
-          href="assets/vendors/ti-icons/css/themify-icons.css"
+          href={`${getBaseUrl()}assets/vendors/css/vendor.bundle.base.css`}
         />
         <link
           rel="stylesheet"
-          href="assets/vendors/css/vendor.bundle.base.css"
+          href={`${getBaseUrl()}assets/vendors/font-awesome/css/font-awesome.min.css`}
         />
-        <link
-          rel="stylesheet"
-          href="assets/vendors/font-awesome/css/font-awesome.min.css"
-        />
-        <link
-          rel="stylesheet"
-          href="assets/vendors/font-awesome/css/font-awesome.min.css"
-        />
-        <link
-          rel="stylesheet"
-          href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css"
-        />
-        <link rel="stylesheet" href="assets/css/style.css" />
-        <link rel="shortcut icon" href="assets/images/favicon.png" />
+       
+        <link rel="stylesheet" href={`${getBaseUrl()}assets/css/style.css`} />
+        <link rel="shortcut icon" href={`${getBaseUrl()}assets/images/favicon.png`} />
       </head>
       <body className={inter.className}>
         <Providers>

@@ -1,5 +1,13 @@
+/**
+ * Here we have all http request for rest api django server
+ */
 import { headers } from "next/headers";
 
+/**
+ * GET http request
+ * @param {*} request 
+ * @returns 
+ */
 export async function GET(request) {
   try {
     const operation = request.nextUrl.searchParams.get("operation");
@@ -19,9 +27,13 @@ export async function GET(request) {
   }
 }
 
+/**
+ * POST http request
+ * @param {*} request 
+ * @returns 
+ */
 export async function POST(request) {
   try {
-    console.log(request);
     const operation = request.nextUrl.searchParams.get("operation");
     const headersList = headers();
     const authToken = headersList.get("Authorization");
@@ -34,7 +46,6 @@ export async function POST(request) {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-    console.log("====formBody", formBody)
     const url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
     const getHeader = {
       Authorization: authToken,
@@ -57,6 +68,11 @@ export async function POST(request) {
   }
 }
 
+/**
+ * DELETE http request
+ * @param {*} request 
+ * @returns 
+ */
 export async function DELETE(request) {
   try {
     const queryParams = request.nextUrl.searchParams.get("query");
@@ -82,6 +98,11 @@ export async function DELETE(request) {
   }
 }
 
+/**
+ * PATCH http request
+ * @param {*} request 
+ * @returns 
+ */
 export async function PATCH(request) {
   try {
     const queryParams = request.nextUrl.searchParams.get("query");
@@ -121,6 +142,11 @@ export async function PATCH(request) {
   }
 }
 
+/**
+ * Get params from request params
+ * @param {*} urlQuery 
+ * @returns 
+ */
 const getParams = (urlQuery) => {
   const getQueryParams = urlQuery?.split?.("&");
   let queryParams = "";

@@ -20,9 +20,6 @@ const UserProfile = () => {
     userProfile: currentUserProfile
   } = useSelector((state) => state.userProfiles);
   const dispatch = useDispatch();
-  console.log({
-    currentUserProfile,
-  });
   const {
     register,
     handleSubmit,

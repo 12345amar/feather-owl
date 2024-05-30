@@ -1,3 +1,7 @@
+/**
+ * Redux userProfileSlice to manage content file state of redux toolkit to use data in entire apps
+ */
+// @aditya please rename this slice name it should be usersSlice where we wil manage all user data in state
 import { createSlice } from "@reduxjs/toolkit";
 import { userProfile } from "@/services/api";
 

@@ -3,9 +3,12 @@
 import Header from "../components/dashboard/header";
 import SideBar from "../components/dashboard/sidebar";
 import Footer from "../components/dashboard/footer";
-export default async function RootLayout({ children }) {
+
+export default function DashboardLayout({
+  children, // will be a page or nested layout
+}) {
   return (
-    <>
+    <section>
       <div className="container-scroller">
         <Header />
         <div className="container-fluid page-body-wrapper">
@@ -16,6 +19,6 @@ export default async function RootLayout({ children }) {
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 }

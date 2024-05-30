@@ -1,7 +1,12 @@
-// redux/authSlice.js
+/**
+ * Redux authSlice to manage user state of redux toolkit to use data in entire apps for login, registration, logout
+ */
 import { createSlice } from "@reduxjs/toolkit";
 import { login, userRegister } from "@/services/api";
 
+/**
+ * Create auth slice
+ */
 const authSlice = createSlice({
   name: "auth",
   initialState: {

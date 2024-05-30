@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter, usePathname  } from 'next/navigation'
 import { decryptToken, encryptKey } from '@/utils/constants';
 
-
+/**
+ * User Auth for entire application
+ */
 const UserAuth = () => {
     const { loading, user, error = '' } = useSelector((state) => state.auth)
     const router = useRouter();

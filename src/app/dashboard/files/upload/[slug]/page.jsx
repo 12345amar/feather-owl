@@ -69,7 +69,6 @@ const FileUpload = ({ params: { slug } }) => {
       customOrder: fileUploadDetails.fileName,
       comment: fileUploadDetails.comment,
     };
-    console.log(data);
     dispatch(uploadContent(data));
     document.getElementById("Files").value = null;
     setFileUploadDetails({

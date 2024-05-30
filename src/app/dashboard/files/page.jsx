@@ -51,9 +51,8 @@ const Files = () => {
   }, [deleteFile]);
 
   useEffect(() => {
-    console.log("===updateFile", updateFile)
-    if (!updateFile?.error?.message) {
-      setIsMessage(updateFile?.message || "File updated.");
+    if (updateFile?.message) {
+      setIsMessage(updateFile?.message);
       dispatch(getFileStores());
     }
     setIsEditInfoModalShow(false);
@@ -100,7 +99,7 @@ const Files = () => {
   };
 
   useEffect(() => {
-    console.log("======pathState", pathState)
+    console.log("pathState", pathState)
   }, [pathState])
   
   return (
@@ -130,18 +129,18 @@ const Files = () => {
             </div>
           </div>
           {deleteFile?.error?.message && (
-            <div class="alert alert-danger" role="alert">
+            <div className="alert alert-danger" role="alert">
               {deleteFile?.error?.message}
             </div>
           )}
            {updateFile?.error?.message && (
-            <div class="alert alert-danger" role="alert">
+            <div className="alert alert-danger" role="alert">
               {updateFile?.error?.message}
             </div>
           )}
 
           {isMessage && isMessage && (
-            <div class="alert alert-success" role="alert">
+            <div className="alert alert-success" role="alert">
               {isMessage}
             </div>
           )}

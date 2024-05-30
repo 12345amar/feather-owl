@@ -1,3 +1,8 @@
+/**
+ * Register API call
+ * @param {*} request 
+ * @returns 
+ */
 export async function POST(request) {
   try {
     const operation = request.nextUrl.searchParams.get("operation");

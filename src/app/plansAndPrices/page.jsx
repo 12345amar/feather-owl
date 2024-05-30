@@ -31,11 +31,9 @@ const PlansAndPrices = () => {
   useEffect(() => {
     dispatch(getPricePlans());
     dispatch(getSubscriptions());
-    console.log(auth);
   }, [dispatch, pricePlans.length, subscriptions.length]);
 
   useEffect(() => {
-    console.log("We ran");
     const currencyList = {
       usd: [3, 6, 9, 12],
       chf: [1, 4, 10],

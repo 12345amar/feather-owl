@@ -24,7 +24,6 @@ const dropdownStyles = {
 };
 
 const Permissions = () => {
-  initializeIcons();
   const [items, setItems] = React.useState([]);
   const [originalItems, setOriginalItems] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -33,6 +32,9 @@ const Permissions = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStorePermissions());
+    initializeIcons()
+  }, [])
+  useEffect(() => {
     if (userFileStorePermissions?.length) {
       const items = userFileStorePermissions.map((item) => {
         return {
@@ -51,7 +53,6 @@ const Permissions = () => {
       setOriginalItems(items);
     }
   }, [
-    auth,
     dispatch,
     user,
     userFileStorePermissions,
@@ -76,7 +77,6 @@ const Permissions = () => {
   };
 
   const handleSelectUser = (selectedUser) => {
-    console.log(selectedUser);
     if (!selectedUser || !selectedUser.key || selectedUser.key === "Select") {
       setItems(originalItems);
       return;

@@ -64,7 +64,7 @@ const SideBar = () => {
           <Link
             className="nav-link"
             data-bs-toggle="collapse"
-            href="#ui-basic"
+            href=""
             aria-expanded="false"
             aria-controls="ui-basic"
             onClick={handleToggleNavigation}
@@ -96,7 +96,7 @@ const SideBar = () => {
           <Link
             className="nav-link"
             data-bs-toggle="collapse"
-            href="#ui-basic"
+            href=""
             aria-expanded="false"
             aria-controls="ui-basic"
             onClick={handleContentToggleNavigation}

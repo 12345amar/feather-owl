@@ -1,3 +1,6 @@
+/**
+ * Redux subscriptionsSlice to manage content file state of redux toolkit to use data in entire apps
+ */
 import { createSlice } from "@reduxjs/toolkit";
 import {
   getPricePlans,

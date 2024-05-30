@@ -1,5 +1,9 @@
 
 const DIRECT_URI_REGISTER = "http://84.227.19.180/userregister/";
+
+/**
+ * list of all rest api operation name
+ */
 export const operations = {
   LOGIN: `login`,
   USER_REGISTER:  `userregister`,
@@ -14,6 +18,10 @@ export const operations = {
   USER_PROFILES: `userprofiles`,
   SUBSCRIBE: `subscribe`,
 }
+
+/**
+ * List of proxy api call
+ */
 export const apiUrls = {
   LOGIN_URL: `${process.env.NEXT_PUBLIC_PROXY_URL}?operation=login`,
   REGISTER_URL: DIRECT_URI_REGISTER,

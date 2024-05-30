@@ -1,4 +1,6 @@
-// src/redux/slices/todosSlice.js
+/**
+ * Redux fileStorePermissionsSlice to manage file store state of redux toolkit to use data in entire apps
+ */
 import { createSlice } from "@reduxjs/toolkit";
 import { getFileStorePermissions } from "@/services/api";
 

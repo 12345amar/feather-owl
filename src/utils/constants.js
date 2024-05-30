@@ -127,3 +127,9 @@ export const titleOptions = [
     text: "Prof.",
   },
 ];
+
+export const getBaseUrl = () => {
+
+
+  return process.env.NEXT_PUBLIC_BASE_URL
+}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
+import { getBaseUrl } from "@/utils/constants";
 
 export default function Home() {
   return (
@@ -28,7 +29,7 @@ export default function Home() {
       <div className={styles.center}>
         <Image
           className={styles.logo}
-          src="/assets/images/logo.svg"
+          src={`${getBaseUrl()}assets/images/logo.svg`}
           alt="Next.js Logo"
           width={600}
           height={500}

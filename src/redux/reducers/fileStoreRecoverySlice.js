@@ -1,4 +1,6 @@
-// src/redux/slices/todosSlice.js
+/**
+ * Redux fileStoreRecoverySlice to manage file store state of redux toolkit to use data in entire apps
+ */
 import { createSlice } from "@reduxjs/toolkit";
 import { getFileStoreRecovery, updateFileStoreRecovery } from "@/services/api";
 

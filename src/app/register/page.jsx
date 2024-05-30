@@ -54,7 +54,7 @@ const Register = () => {
           <div className="mt-5">
             <h2 className="mb-4">Sign Up</h2>
             {user?.error?.message && (
-              <div class="alert alert-danger" role="alert">
+              <div className="alert alert-danger" role="alert">
                 {user?.error?.message}
               </div>
             )}

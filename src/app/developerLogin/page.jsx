@@ -43,7 +43,7 @@ export default function DeveloperLogin() {
         <h5>Developer Login by Access Token</h5>
         <div className="flex">
           {user?.error?.message && (
-            <div class="alert alert-danger" role="alert">
+            <div className="alert alert-danger" role="alert">
               {user?.error?.message}
             </div>
           )}

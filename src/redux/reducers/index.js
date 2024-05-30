@@ -1,4 +1,6 @@
-// redux/reducers.js
+/**
+ * collect all reducer slice to pass in provider as store
+ */
 import { combineReducers } from "redux";
 import authReducer from "./authSlice";
 import subscriptionsSlice from "./subscriptionsSlice";

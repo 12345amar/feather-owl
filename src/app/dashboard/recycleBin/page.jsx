@@ -31,16 +31,16 @@ const dropdownStyles = {
 };
 
 const RecycleBin = () => {
-  initializeIcons();
   const router = useRouter()
   const [items, setItems] = React.useState([]);
-  const [originalItems, setOriginalItems] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [originalItems, setOriginalItems] = React.useState([]);
   const { loading: userLoading, user } = useSelector((state) => state.auth);
   const { loading: fileStoreRecoverLoading, canRecoveredFiles, fileStoreRecovered } = useSelector((state) => state.fileStoreRecover);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStoreRecovery());
+    initializeIcons()
   },[])
   useEffect(() => {
     if (canRecoveredFiles?.length) {
@@ -65,9 +65,6 @@ useEffect(() => {
     }
 }, [fileStoreRecoverLoading, fileStoreRecovered])
   const handleSearch = (value) => {
-    
-    
-    console.log("===searchTerm", value)
     setSearchTerm(value);
     if (value === "") {
       setItems(originalItems);
@@ -83,7 +80,6 @@ useEffect(() => {
     }
   };
 const recoveryFileHandle = (fileStoreId) => {
-  console.log("===fileStoreId", fileStoreId)
   const recycleBinParams = {
     recoverFileStore: true,
     id: fileStoreId
@@ -171,7 +167,7 @@ return (
           <div className={styles.permissionContainer}>
             <div>
             { fileStoreRecovered?.error?.message && 
-              <div class="alert alert-danger" role="alert">
+              <div className="alert alert-danger" role="alert">
                 {user?.error?.message}
               </div>
             }

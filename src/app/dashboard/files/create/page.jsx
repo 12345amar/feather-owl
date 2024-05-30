@@ -49,7 +49,7 @@ const Files = () => {
             {/* <p className="card-description">  </p> */}
             <div className="row">
               {createFile?.error?.message && (
-                <div class="alert alert-danger" role="alert">
+                <div className="alert alert-danger" role="alert">
                   {user?.error?.message}
                 </div>
               )}

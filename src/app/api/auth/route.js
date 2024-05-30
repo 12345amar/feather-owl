@@ -1,3 +1,7 @@
+/**
+ * WSO2 auth login with nextjs authentication
+ * Note: work in progress
+ */
 import { NextResponse } from "next/server";
 import { errorMessage } from "@/utils/apiMessages";
 import Cors from "nextjs-cors";
@@ -41,7 +45,6 @@ export async function POST(request, response) {
   });
   try {
     const requestParams = await request.json();
-    console.log("=====requestParams", requestParams);
     const { username, password } = requestParams;
     if (!username) {
       console.error("Auth Loaded: ", errorMessage.usernameRequired);
@@ -66,7 +69,6 @@ export async function POST(request, response) {
     body.append("username", username);
     body.append("password", password);
     body.append("scope", scope);
-    console.log("==========================>", headers, body);
     const response = await fetch(authTokenUrl, {
       method: "POST",
       headers,
