@@ -499,6 +499,7 @@ export const createSubscription = createAsyncThunk(
   async (params) => {
     try {
       const requestParams = JSON.stringify(params);
+      console.log(requestParams);
       const response = await fetch(apiUrls.CREATE_SUBSCRIPTION_PLANS, {
         method: "POST",
         headers: myHeaders(),

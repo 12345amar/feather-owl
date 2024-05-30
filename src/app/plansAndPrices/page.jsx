@@ -22,6 +22,7 @@ const PlansAndPrices = () => {
   const { subscriptions, pricePlans, loading } = useSelector(
     (state) => state.subscription
   );
+  const { auth } = useSelector((state) => state);
   const [getPriceUsdPlans, setGetPriceUsdPlans] = useState([]);
   const [pricePlansType, setPricePlansType] = useState("monthly");
   const [selectedCurrency, setSelectedCurrency] = useState("usd");
@@ -30,6 +31,7 @@ const PlansAndPrices = () => {
   useEffect(() => {
     dispatch(getPricePlans());
     dispatch(getSubscriptions());
+    console.log(auth);
   }, [dispatch, pricePlans.length, subscriptions.length]);
 
   useEffect(() => {
@@ -60,15 +62,26 @@ const PlansAndPrices = () => {
     const pricePlan = getPriceUsdPlans.find((item) =>
       item?.pricePlanName.includes(selectedPlan?.subscriptionPlanName)
     );
+    const billingPreference =
+      pricePlansType === "monthly"
+        ? "M"
+        : pricePlansType === "quarterly"
+        ? "Q"
+        : pricePlansType === "yearly"
+        ? "Y"
+        : "";
+    console.log(pricePlan);
     const selectedSubscription = {
       subscriptionName: selectedPlan?.subscriptionPlanName,
       subscriptionSelectedPricePlan: pricePlan?.currencyID,
-      subscriptionBillingCountry: selectedCurrency,
-      subscriptionBillingLanguage: "en",
+      subscriptionBillingCountry:
+        "http://k8s.integration.feather-lab.com:32744/countries/1/",
+      subscriptionBillingLanguage:
+        "http://k8s.integration.feather-lab.com:32744/languages/1/",
       comment: pricePlan?.comment,
-      subscriptionBillingEmail: "", // Get it when user is logged in
-      subscriptionBillingPreference: pricePlansType,
-      enterpriseBillingRequestEmail: "?",
+      subscriptionBillingEmail: auth?.user?.email,
+      subscriptionBillingPreference: billingPreference,
+      enterpriseBillingRequestEmail: auth?.user?.email,
     };
     dispatch(createSubscription(selectedSubscription));
   }, [
