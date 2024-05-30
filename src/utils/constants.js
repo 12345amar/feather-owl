@@ -86,3 +86,11 @@ export const titleOptions = [
     text: "Prof.",
   },
 ];
+
+export const subscriptionLinks = {
+  pricePlanLink: "http://k8s.integration.feather-lab.com:32744/priceplans",
+  billingCountryLink:
+    "http://k8s.integration.feather-lab.com:32744/countries/1/",
+  billingLanguageLink:
+    "http://k8s.integration.feather-lab.com:32744/languages/1/",
+};

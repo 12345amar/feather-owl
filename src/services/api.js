@@ -193,13 +193,10 @@ export const getPricePlans = createAsyncThunk(
       });
       const result = response.json();
       if (result) {
-        console.log("loaded pricePlans success:");
         return result;
       }
-      console.error("api priceplans:", error);
       return { error: { message: error?.message } };
     } catch (error) {
-      console.error("api pricePlans:", error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";
@@ -344,13 +341,10 @@ export const getSubscriptions = createAsyncThunk(
       });
       const result = response.json();
       if (result) {
-        console.log("loaded subscriptions success:");
         return result;
       }
-      console.error("api subscriptions:", error);
       return { error: { message: error?.message } };
     } catch (error) {
-      console.error("api subscriptions:", error);
       const message = error?.response?.data?.username?.[0]
         ? error?.response?.data?.username?.[0]
         : "Something went to wrong";
@@ -464,18 +458,15 @@ export const createSubscription = createAsyncThunk(
   async (params) => {
     try {
       const requestParams = JSON.stringify(params);
-      console.log(requestParams);
       const response = await fetch(apiUrls.CREATE_SUBSCRIPTION_PLANS, {
         method: "POST",
         headers: myHeaders(),
         body: requestParams,
       });
       const result = await response.json();
-      console.log(result);
       if (result) {
         return result;
       }
-      console.error(error);
       return { error: { message: error?.message } };
     } catch (error) {
       console.error(error);
