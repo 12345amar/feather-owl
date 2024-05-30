@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getFileStores, deleteFileStores, updateFileStores } from "@/services/api";
 import { dataSizeType } from "@/utils/constants";
@@ -15,7 +15,9 @@ import EditInfo from "@/app/components/modal/EditInfo";
 
 const Files = () => {
   const router = useRouter();
-  const { auth, files } = useSelector((state) => state);
+  const pathState = useSearchParams()
+  const { loading: userLoading, user } = useSelector((state) => state.auth);
+  const { loading: filesLoading, fileStores, deleteFile, createFile, updateFile } = useSelector((state) => state.files);
   const [isModalShow, setIsModalShow] = useState(false);
   const [fileDeleteId, setFileDeleteId] = useState("");
   const [isMessage, setIsMessage] = useState("");
@@ -23,8 +25,7 @@ const Files = () => {
   const [searchName, setSearchName] = useState("");
   const [isEditInfoModalShow, setIsEditInfoModalShow] = useState(false);
   const [editFileStoreData, setEditFileStoreData] = useState({});
-  const { loading: userLoading, user } = auth;
-  const { loading: filesLoading, fileStores, deleteFile, createFile, updateFile } = files;
+  
   const dispatch = useDispatch();
   const route = useRouter();
   useEffect(() => {
@@ -52,7 +53,6 @@ const Files = () => {
   useEffect(() => {
     console.log("===updateFile", updateFile)
     if (!updateFile?.error?.message) {
-      setIsMessage(updateFile?.message);
       dispatch(getFileStores());
     }
     setIsEditInfoModalShow(false);
@@ -95,6 +95,11 @@ const Files = () => {
       setFileStoreList(fileStores);
     }
   };
+
+  useEffect(() => {
+    console.log("======pathState", pathState)
+  }, [pathState])
+  
   return (
     <div className="col-lg-12 grid-margin stretch-card">
       <div className="card">

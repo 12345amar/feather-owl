@@ -1,15 +1,17 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createFileStores, getFileStores } from "@/services/api";
+import { useRouter } from "next/navigation";
+import { createFileStores, getUserSubscriptions } from "@/services/api";
 import { useForm } from "react-hook-form";
+import { createIdWithUrl } from "@/utils/constants";
+import { operations } from "@/utils/apiUrls";
+
 
 const Files = () => {
-  const { auth, files, subscription } = useSelector((state) => state);
-  const { loading: userLoading, user } = auth;
-  const { userSubscriptions, loading: loadingUserSubscription } = subscription;
-  const { loading: filesLoading, fileStores, createFile } = files;
+  const { createFile, loading: loadingFile } = useSelector((state) => state.files);
+  const { userSubscriptions, loading: loadingUserSubscription } = useSelector((state) => state.subscription);
   const router = useRouter();
   const dispatch = useDispatch();
   const {
@@ -17,20 +19,21 @@ const Files = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const handleFileStoreSubmit = (formData) => {
-    const subscriptionID = `http://k8s.integration.feather-lab.com:32744/subscriptions/11/`;
+  const handleFileStoreSubmit = useCallback((formData) => {
+    if (!userSubscriptions?.length) {
+      dispatch(getUserSubscriptions());
+      return
+    }
+    const subscriptionID = createIdWithUrl(operations.SUBSCRIPTIONS, userSubscriptions[0]?.subscriptionID)
     const createFileStoreDate = {
       ...formData,
       subscriptionID,
-    };
-    console.log(createFileStoreDate);
+    }
     dispatch(createFileStores(createFileStoreDate));
-  };
+  }, [userSubscriptions]);
   useEffect(() => {
-    console.log("=========createFile", createFile);
     if (createFile && createFile?.fileStoreID) {
-      router.push("/dashboard/files");
+      router.push("/dashboard/files", { isFileCreated: true });
     }
   }, [createFile]);
   return (
@@ -79,7 +82,7 @@ const Files = () => {
                       name="storagePool"
                       {...register("storagePool")}
                     >
-                      <option disabled selected>
+                      <option disabled>
                         Select storage pool
                       </option>
                       <option value="nfs">nfs - default</option>
@@ -104,7 +107,7 @@ const Files = () => {
                       name="subscriptionID"
                       {...register("subscriptionID")}
                     >
-                      <option disabled selected>
+                      <option disabled>
                         Add Users
                       </option>
                       <option value="self">Self</option>

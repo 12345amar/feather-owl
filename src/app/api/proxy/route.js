@@ -6,7 +6,7 @@ export async function GET(request) {
     const headersList = headers();
     const authToken = headersList.get("Authorization");
     const getHeader = { Authorization: authToken };
-    const url = `${process.env.API_URL}/${operation}/`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
     const res = await fetch(url, { method: "GET", headers: getHeader });
     if (res && res.status === 200) {
       const result = await res.json();
@@ -35,7 +35,7 @@ export async function POST(request) {
     }
     formBody = formBody.join("&");
     console.log("====formBody", formBody)
-    const url = `${process.env.API_URL}/${operation}/`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
     const getHeader = {
       Authorization: authToken,
       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
@@ -65,9 +65,9 @@ export async function DELETE(request) {
     const headersList = headers();
     const authToken = headersList.get("Authorization");
     const getHeader = { Authorization: authToken };
-    let url = `${process.env.API_URL}/${operation}/`;
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
     if (queryParams) {
-      url = `${process.env.API_URL}/${operation}${queryParams}`;
+      url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}${queryParams}`;
     }
     const res = await fetch(url, { method: "DELETE", headers: getHeader });
     if (res && res.status === 200) {
@@ -82,37 +82,41 @@ export async function DELETE(request) {
   }
 }
 
-export async function PUT(request) {
+export async function PATCH(request) {
   try {
     const queryParams = request.nextUrl.searchParams.get("query");
-
     const operation = request.nextUrl.searchParams.get("operation");
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
+    if (queryParams) {
+      url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}${queryParams}`;
+    }
     const getParams = await request.json();
     const headersList = headers();
     const authToken = headersList.get("Authorization");
-    const getHeader = { Authorization: authToken };
-    let url = `${process.env.API_URL}/${operation}/`;
-    if (queryParams) {
-      url = `${process.env.API_URL}/${operation}${queryParams}`;
-    }
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("Authorization", authToken);
+    const urlencoded = new URLSearchParams();
     let formBody = [];
     for (var property in getParams) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(getParams[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
+      urlencoded.append(property, getParams[property]);
     }
-    formBody = formBody.join("&");
+    const requestOptions = {
+      method: "PATCH",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow"
+    };
 
-    const res = await fetch(url, { method: "PUT", headers: getHeader, body: formBody });
+    const res = await fetch(url, requestOptions)
     console.error("Server API: ", "/", operation, res.statusText);
     if (res && res.status === 200) {
       const result = await res.json();
       return Response.json(result);
     }
-
     return Response.json({ error: res.statusText, status: res.status });
   } catch (error) {
-    console.log("Server API: ", "/", error);
+    console.log("Server API Error: ", "/", error);
     return Response.json({ error });
   }
 }

@@ -1,33 +1,60 @@
 import CryptoJS from "crypto-js";
+import moment from "moment";
 
-const encryptKey = {
+/**
+ * Any random secret key for encrypt and decrypt 
+ */
+export const encryptKey = {
   LOGIN_SECRET: "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIHbd50+YA77FGCuLIVFJkq",
 };
 
-// Function to encrypt token
-const encryptToken = (token, secretKey) => {
+
+/**
+ * Function to encrypt token
+ * @param {*} token 
+ * @param {*} secretKey 
+ * @returns 
+ */
+export const encryptToken = (token, secretKey) => {
   return CryptoJS.AES.encrypt(token, secretKey).toString();
 };
 
-// Function to decrypt token
-const decryptToken = (encryptedToken, secretKey) => {
+/**
+ * Function to decrypt token
+ * @param {*} encryptedToken 
+ * @param {*} secretKey 
+ * @returns 
+ */
+export const decryptToken = (encryptedToken, secretKey) => {
   const bytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
-const parseJwt = (token) => {
+/**
+ * Parse JWT token
+ * @param {*} token 
+ * @returns 
+ */
+export const parseJwt = (token) => {
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 };
 
-const currencySymbol = {
+/**
+ * Currency symbol
+ */
+export const currencySymbol = {
   usd: "$",
   euro: "€",
   chf: "₣",
 };
 
-const dataSizeType = (value) => {
+/**
+ * Convert byte into KB, MB, GB, TB, PB
+ * @param {*} value 
+ * @returns 
+ */
+export const dataSizeType = (value) => {
   const dataValue = Number(value);
-  let result = "";
   if (dataValue > 1000000000000000) {
     return `${dataValue / 1000000000000000} PB`; // peta byte
   } else if (dataValue > 1000000000000) {
@@ -41,25 +68,39 @@ const dataSizeType = (value) => {
   } else {
     return `${dataValue} Bytes`;
   }
-
-  return result;
 };
 
+/**
+ * User Type
+ */
 export const userType = {
   SUPER_ADMIN: "super_admin",
   PRIVATE_USER: "private_user",
   ENTERPRISE_USER: "enterprise_user",
 };
 
-export {
-  encryptKey,
-  encryptToken,
-  decryptToken,
-  parseJwt,
-  currencySymbol,
-  dataSizeType,
-};
+/**
+ * create uri with id
+ * @param {*} operation 
+ * @param {*} id 
+ * @returns 
+ */
+export const createIdWithUrl = (operation, id) => {
+  return `${process.env.NEXT_PUBLIC_API_URL}/${operation}/${id}/`
+}
 
+/**
+ * make format of date and time according to country
+ * @param {*} value 
+ * @returns 
+ */
+export const dateAndTimeFormat = (value) => {
+  return moment(value).format("dddd, MMMM Do YYYY, h:mm:ss a")
+} 
+
+/**
+ * Title options
+ */
 export const titleOptions = [
   {
     value: "Mr.",

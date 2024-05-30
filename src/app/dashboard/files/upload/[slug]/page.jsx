@@ -28,9 +28,8 @@ const searchBoxStyles = {
 
 const FileUpload = ({ params: { slug } }) => {
   initializeIcons();
-  const { auth, files } = useSelector((state) => state);
-  const { loading: userLoading, user } = auth;
-  const { loading: filesLoading, fileStores } = files;
+  const { loading: userLoading, user } = useSelector((state) => state.auth);
+  const { loading: filesLoading, fileStores } = useSelector((state) => state.files);
   const [file, setFile] = useState(null);
   const dispatch = useDispatch();
   const [selectedFile, setSelectedFile] = useState({

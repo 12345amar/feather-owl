@@ -28,14 +28,11 @@ const Permissions = () => {
   const [items, setItems] = React.useState([]);
   const [originalItems, setOriginalItems] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { auth, fileStorePermissions } = useSelector((state) => state);
-  const { loading: userLoading, user } = auth;
-  const { loading: filesPermissionLoading, userFileStorePermissions } =
-    fileStorePermissions;
+  const { loading: userLoading, user } = useSelector((state) => state.auth);
+  const { loading: filesPermissionLoading, userFileStorePermissions } = useSelector((state) => state.fileStorePermissions);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStorePermissions());
-    console.log({ user, auth });
     if (userFileStorePermissions?.length) {
       const items = userFileStorePermissions.map((item) => {
         return {

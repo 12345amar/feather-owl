@@ -263,24 +263,20 @@ export const updateFileStores = createAsyncThunk(
   "files/updateFileStores",
   async (params) => {
     try {
-      
-    console.log(params)
-    let url = apiUrls.FILE_STORE_ADMINS;
-    if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
-      url = apiUrls.FILE_STORES;
-    }
+      console.log(params)
+      let url = apiUrls.FILE_STORES;
+      if (params?.userType && params?.userType === userType.ENTERPRISE_USER) {
+        url = apiUrls.FILE_STORE_ADMINS;
+      }
       url = `${url}&query=/${params?.id}/`
       console.log(url)
-     
       const requestParams = JSON.stringify({
         fileStoreName: params?.fileStoreName,
         subscriptionID: params?.subscriptionID
       });
       console.log("requestParams", requestParams, params?.id)
-     
-      
       const response = await fetch(url, {
-        method: "PUT",
+        method: "PATCH",
         headers: myHeaders(),
         body: requestParams,
       });
@@ -378,6 +374,8 @@ export const getFileStorePermissions = createAsyncThunk(
   }
 );
 
+ 
+
 export const uploadContent = createAsyncThunk(
   "files/contentupload",
   async (params) => {
@@ -409,9 +407,9 @@ export const uploadContent = createAsyncThunk(
 );
 
 export const getFileStoreRecovery = createAsyncThunk(
-  "files/filestorerecovery",
+  "filestorerecovery/getFileStoreRecovery",
   async () => {
-    const url = `${apiUrls.FILE_STORES_RECOVERY}/?subscriptionID=6&orderedByUser=8&storagePool=nfs`;
+    const url = `${apiUrls.FILE_STORES_RECOVERY}`;
     console.log(url);
     try {
       const response = await fetch(url, {
@@ -426,6 +424,41 @@ export const getFileStoreRecovery = createAsyncThunk(
       }
       console.error("api filestores:", error);
       return { error: { message: error?.message } };
+    } catch (error) {
+      console.error(error);
+      const message = error?.response?.data?.username?.[0]
+        ? error?.response?.data?.username?.[0]
+        : "Something went to wrong";
+      throw { error: { message } };
+    }
+  }
+);
+
+export const updateFileStoreRecovery = createAsyncThunk(
+  "filestorerecovery/updateFileStoreRecovery",
+  async (params) => {
+    
+    console.log("====requestParams, id", params, params?.id)
+    
+    const url = `${apiUrls.FILE_STORES_RECOVERY}&query=/${params?.id}/`;
+    const requestParams = JSON.stringify({
+      recoverFileStore: params.recoverFileStore
+    });
+    console.log("====requestParams, id====>", requestParams, params?.id, url)
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: myHeaders(),
+        body: requestParams,
+      });
+      const result = await response.json();
+      console.log(result, "result");
+      if (result?.code === 200) {
+        console.log("loaded recover filestores success:");
+        return result;
+      }
+      console.error("api recover filestores:", "File records do not exist.");
+      return { error: { message: result?.detail ? result?.detail : result?.error ? result?.error : "File store has not been recovered, try again." } };
     } catch (error) {
       console.error(error);
       const message = error?.response?.data?.username?.[0]

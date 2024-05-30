@@ -2,6 +2,8 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
+import { dataSizeType } from "@/utils/constants";
+import { useRouter } from "next/navigation";
 import {
   DetailsList,
   DetailsListLayoutMode,
@@ -17,7 +19,9 @@ import styles from "./page.module.css";
 
 import { Spinner } from "@fluentui/react/lib/Spinner";
 
-import { getFileStoreRecovery } from "@/services/api";
+import { getFileStoreRecovery, updateFileStoreRecovery } from "@/services/api";
+import { dateAndTimeFormat } from "@/utils/constants";
+import { clearRecoverFile } from "@/redux/reducers/fileStoreRecoverySlice";
 
 const searchBoxStyles = {
   root: { width: 300 },
@@ -28,99 +32,86 @@ const dropdownStyles = {
 
 const RecycleBin = () => {
   initializeIcons();
+  const router = useRouter()
   const [items, setItems] = React.useState([]);
   const [originalItems, setOriginalItems] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { auth, fileStoreRecover } = useSelector((state) => state);
-  const { loading: userLoading, user } = auth;
-  const { loading: fileStoreRecoverLoading, canRecoveredFiles } =
-    fileStoreRecover;
+  const { loading: userLoading, user } = useSelector((state) => state.auth);
+  const { loading: fileStoreRecoverLoading, canRecoveredFiles, fileStoreRecovered } = useSelector((state) => state.fileStoreRecover);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFileStoreRecovery());
-    console.log(user);
+  },[])
+  useEffect(() => {
     if (canRecoveredFiles?.length) {
-      console.log("canRecoveredFiles", canRecoveredFiles);
-      // const items = canRecoveredFiles.map((item) => {
-      //   return {
-      //     PermissionID: item?.permissionID,
-      //     User: user?.username,
-      //     FirstName: user?.given_name?.split(" ")[0].toUpperCase(),
-      //     LastName: user?.family_name?.split(" ")[1].toUpperCase(),
-      //     Comment: item?.comment,
-      //     Write: item?.canWriteFiles,
-      //     Delete: item?.canDeleteFiles,
-      //     Upload: item?.canUploadFiles,
-      //     Download: item?.canDownloadFiles,
-      //   };
-      // });
-      // setItems(items);
-      // setOriginalItems(items);
+        const items = canRecoveredFiles.map((item) => {
+        return {
+          fileName: item?.fileStoreName,
+          deletedBy: user?.given_name?.split(" ")[0].toUpperCase(),
+          Size: dataSizeType(item?.currentSizeInByte),
+          DeletedDate: dateAndTimeFormat(item?.lastChangeDate),
+          recovery: item?.fileStoreID
+        };
+      });
+      setItems(items);
+      setOriginalItems(items);
     }
-  }, [canRecoveredFiles?.length]);
-
-  const handleSearch = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    setSearchTerm(searchTerm);
-    if (searchTerm === "") {
+  }, [canRecoveredFiles?.length])
+  
+useEffect(() => {
+    if (!fileStoreRecoverLoading && fileStoreRecovered?.code) {
+      dispatch(clearRecoverFile())
+      router.push('/dashboard/files', {isFileRecovered: true, message: fileStoreRecovered.message })
+    }
+}, [fileStoreRecoverLoading, fileStoreRecovered])
+  const handleSearch = (value) => {
+    
+    
+    console.log("===searchTerm", value)
+    setSearchTerm(value);
+    if (value === "") {
       setItems(originalItems);
     } else {
       const searchedValues = items.filter((item) => {
         return (
-          item.User.toLowerCase().includes(searchTerm) ||
-          item.FirstName.toLowerCase().includes(searchTerm) ||
-          item.LastName.toLowerCase().includes(searchTerm)
+          item.fileName.toLowerCase().includes(value) ||
+          item.deletedBy.toLowerCase().includes(value) ||
+          item.DeletedDate.toLowerCase().includes(value)
         );
       });
       setItems(searchedValues);
     }
   };
-
-  const handleSelectUser = (selectedUser) => {
-    console.log(selectedUser);
-    if (!selectedUser || !selectedUser.key || selectedUser.key === "Select") {
-      setItems(originalItems);
-      return;
-    }
-    const searchedValues = originalItems.filter((item) => {
-      return item.User.toLowerCase().includes(selectedUser?.text.toLowerCase());
-    });
-    setItems(searchedValues);
-  };
-
-  const options = React.useMemo(
-    () => [
-      {
-        key: "Select",
-        text: "Select",
-      },
-      {
-        key: user?.username,
-        text: user?.username,
-      },
-    ],
-    [user?.username]
-  );
-
-  const handleAddUser = () => {
-    console.log("Add User");
-  };
-
+const recoveryFileHandle = (fileStoreId) => {
+  console.log("===fileStoreId", fileStoreId)
+  const recycleBinParams = {
+    recoverFileStore: true,
+    id: fileStoreId
+  } 
+  dispatch(updateFileStoreRecovery(recycleBinParams))
+}
   const columns = [
     {
       key: "column0",
-      name: "Permission ID",
-      fieldName: "PermissionID",
-      minWidth: 50,
-      maxWidth: 50,
+      name: "File Name",
+      fieldName: "fileName",
+      minWidth: 150,
+      maxWidth: 150,
       isResizable: true,
+      isRowHeader: true,
+      isSorted: true,
+      isSortedDescending: false,
+      sortAscendingAriaLabel: "Sorted A to Z",
+      sortDescendingAriaLabel: "Sorted Z to A",
+      data: "string",
+      isPadded: true,
     },
     {
       key: "column1",
-      name: "User",
-      fieldName: "User",
-      minWidth: 100,
-      maxWidth: 200,
+      name: "Deleted By",
+      fieldName: "deletedBy",
+      minWidth: 150,
+      maxWidth: 150,
       isResizable: true,
       isRowHeader: true,
       isSorted: true,
@@ -132,25 +123,25 @@ const RecycleBin = () => {
     },
     {
       key: "column2",
-      name: "First Name",
-      fieldName: "FirstName",
-      minWidth: 100,
-      maxWidth: 100,
+      name: "Size",
+      fieldName: "Size",
+      minWidth: 50,
+      maxWidth: 50,
       isResizable: true,
       isRowHeader: true,
       isSorted: true,
       isSortedDescending: false,
-      sortAscendingAriaLabel: "Sorted A to Z",
-      sortDescendingAriaLabel: "Sorted Z to A",
+      sortAscendingAriaLabel: "Sorted 0 to 9",
+      sortDescendingAriaLabel: "Sorted 9 to 0",
       data: "string",
       isPadded: true,
     },
     {
       key: "column3",
-      name: "Last Name",
-      fieldName: "LastName",
-      minWidth: 100,
-      maxWidth: 100,
+      name: "Deleted Date & Time",
+      fieldName: "DeletedDate",
+      minWidth: 200,
+      maxWidth: 200,
       isResizable: true,
       isRowHeader: true,
       isSorted: true,
@@ -162,91 +153,28 @@ const RecycleBin = () => {
     },
     {
       key: "column4",
-      name: "Comment",
-      fieldName: "Comment",
-      minWidth: 100,
-      maxWidth: 300,
-      isResizable: true,
-    },
-    // {
-    //   key: "column5",
-    //   name: "Remove",
-    //   fieldName: "Remove",
-    //   minWidth: 100,
-    //   maxWidth: 200,
-    //   isResizable: true,
-    // },
-    // {
-    //   key: "column6",
-    //   name: "Read",
-    //   fieldName: "Read",
-    //   minWidth: 100,
-    //   maxWidth: 200,
-    //   isResizable: true,
-    // },
-    {
-      key: "column7",
-      name: "Write",
-      fieldName: "Write",
+      name: "Recovery",
+      fieldName: "recovery",
       minWidth: 50,
       maxWidth: 50,
       isResizable: true,
       onRender: (item) => {
-        return <input type="checkbox" checked={item.Write} />;
+        return <a href="#" onClick={() => { recoveryFileHandle(item.recovery)}} ><i className="fa fa-history" style={{fontSize: "14px"}} /></a>;
       },
-    },
-    {
-      key: "column8",
-      name: "Download",
-      fieldName: "Download",
-      minWidth: 50,
-      maxWidth: 50,
-      isResizable: true,
-      onRender: (item) => {
-        return <input type="checkbox" checked={item.Download} />;
-      },
-    },
-    {
-      key: "column9",
-      name: "Upload",
-      fieldName: "Upload",
-      minWidth: 50,
-      maxWidth: 50,
-      isResizable: true,
-      onRender: (item) => {
-        return <input type="checkbox" checked={item.Upload} />;
-      },
-    },
-    {
-      key: "column10",
-      name: "Delete",
-      fieldName: "Delete",
-      minWidth: 50,
-      maxWidth: 50,
-      isResizable: true,
-      onRender: (item) => {
-        return (
-          <input
-            type="checkbox"
-            checked={item.Delete}
-            style={{
-              "&checked": {
-                backgroundColor: "#023047",
-              },
-            }}
-          />
-        );
-      },
-    },
+    }
   ];
-  return userLoading || fileStoreRecoverLoading ? (
-    <Spinner label="Loading..." />
-  ) : (
+
+return (
     <section className="col-lg-12 grid-margin stretch-card">
       <div className="card">
         <div className="card-body">
           <div className={styles.permissionContainer}>
             <div>
+            { fileStoreRecovered?.error?.message && 
+              <div class="alert alert-danger" role="alert">
+                {user?.error?.message}
+              </div>
+            }
               <div className={styles.permissionsControl}>
                 <SearchBox
                   styles={searchBoxStyles}
@@ -257,20 +185,14 @@ const RecycleBin = () => {
                   onClear={(ev) => {
                     handleSearch("");
                   }}
-                  onSearch={(newValue) => handleSearch(newValue)}
+                  onSearch={(e) => handleSearch(e)}
                 />
-                <div className={styles.permissionsControl_inner}>
-                  <Dropdown
-                    placeholder="Select User"
-                    options={options}
-                    styles={dropdownStyles}
-                    onChange={(e, item) => handleSelectUser(item)}
-                  />
-                  <PrimaryButton text="Add User" onClick={handleAddUser} />
-                </div>
               </div>
             </div>
             <div>
+            {userLoading || fileStoreRecoverLoading ? (
+  <Spinner label="Loading..." />
+) : (
               <DetailsList
                 items={items}
                 columns={columns}
@@ -282,13 +204,12 @@ const RecycleBin = () => {
                 ariaLabelForSelectionColumn="Toggle selection"
                 ariaLabelForSelectAllCheckbox="Toggle selection for all items"
                 checkButtonAriaLabel="select row"
-              />
+              />)}
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>)
 };
 
 export default RecycleBin;

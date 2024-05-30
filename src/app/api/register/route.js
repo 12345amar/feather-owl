@@ -4,7 +4,7 @@ export async function POST(request) {
     const headersList = headers();
     const authToken = headersList.get("Authorization");
     const getHeader = { Authorization: authToken };
-    const url = `${process.env.API_URL}/${operation}/`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/${operation}/`;
     const res = await fetch(url, { method: "POST", headers: getHeader });
     if (res && res.status === 200) {
       const result = await res.json();

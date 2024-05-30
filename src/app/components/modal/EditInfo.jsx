@@ -5,7 +5,6 @@ import { updateFileStores } from "@/services/api";
 
 const EditInfo = ({
   cancelEvent = () => {},
-  // handleFileStoreSubmit = () => {},
   isModalShow = false,
   editFileStoreData = {}
 }) => {
@@ -17,10 +16,7 @@ const EditInfo = ({
   const dispatch = useDispatch();
 
   const handleFileStoreSubmit = (formData) => {
-    const subscriptionID = `http://k8s.integration.feather-lab.com:32744/subscriptions/11/`;
-    const submitData =  {...formData, subscriptionID, id:  editFileStoreData?.fileStoreID}
-    console.log("======", submitData);
-
+    const submitData =  {...formData, id:  editFileStoreData?.fileStoreID}
     dispatch(updateFileStores(submitData));
   }
 

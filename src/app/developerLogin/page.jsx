@@ -8,10 +8,8 @@ import { useRouter } from "next/navigation";
 import { login, getUserSubscriptions } from "../../services/api";
 
 export default function DeveloperLogin() {
-  const state = useSelector((state) => state);
-  const { loading, user } = state.auth;
-  const { userSubscriptions, loading: loadingUserSubscription } =
-    state.subscription;
+  const { loading, user } = useSelector((state) => state.auth);
+  const { userSubscriptions, loading: loadingUserSubscription } = useSelector((state) => state.subscription);
   const router = useRouter();
   const dispatch = useDispatch();
   const {

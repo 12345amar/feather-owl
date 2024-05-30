@@ -13,13 +13,12 @@ import { titleOptions } from "@/utils/constants";
 import styles from "./page.module.css";
 
 const UserProfile = () => {
-  const { auth, userProfiles } = useSelector((state) => state);
-  const { error: authError, loading: authLoading, user: authUser } = auth;
-  const {
+  const { error: authError, loading: authLoading, user: authUser } = useSelector((state) => state.auth);
+  const {  
     error: userProfileError,
     loading: userProfileLoading,
-    userProfile: currentUserProfile,
-  } = userProfiles;
+    userProfile: currentUserProfile
+  } = useSelector((state) => state.userProfiles);
   const dispatch = useDispatch();
   console.log({
     currentUserProfile,
