@@ -1,20 +1,20 @@
 import { z } from "zod";
 
 export const userProfileSchema = z.object({
-  username: z
-    .string({
-      required_error: "Username is required",
-    })
-    .trim()
-    .min(3, { message: "Please enter the username correctly" }),
-  email: z
-    .string({
-      required_error: "Please enter a valid email address",
-    })
-    .trim()
-    .email({
-      required_error: "Please enter a valid email address",
-    }),
+  // username: z
+  //   .string({
+  //     required_error: "Username is required",
+  //   })
+  //   .trim()
+  //   .min(3, { message: "Please enter the username correctly" }),
+  // email: z
+  //   .string({
+  //     required_error: "Please enter a valid email address",
+  //   })
+  //   .trim()
+  //   .email({
+  //     required_error: "Please enter a valid email address",
+  //   }),
   title: z
     .string({
       required_error: "Title is required",

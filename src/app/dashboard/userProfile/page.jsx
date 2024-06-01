@@ -13,11 +13,15 @@ import { titleOptions } from "@/utils/constants";
 import styles from "./page.module.css";
 
 const UserProfile = () => {
-  const { error: authError, loading: authLoading, user: authUser } = useSelector((state) => state.auth);
-  const {  
+  const {
+    error: authError,
+    loading: authLoading,
+    user: authUser,
+  } = useSelector((state) => state.auth);
+  const {
     error: userProfileError,
     loading: userProfileLoading,
-    userProfile: currentUserProfile
+    userProfile: currentUserProfile,
   } = useSelector((state) => state.userProfiles);
   const dispatch = useDispatch();
   const {
@@ -91,13 +95,6 @@ const UserProfile = () => {
                 <div className="form-row">
                   <div className="form-group col">
                     <label htmlFor="title">Title</label>
-                    {/* <FormField
-                      type="text"
-                      placeholder="Enter Title"
-                      name="title"
-                      register={register}
-                      error={errors.title}
-                    /> */}
                     <DropdownField
                       name="title"
                       placeholder="Select Title"
@@ -111,7 +108,7 @@ const UserProfile = () => {
                   <div className="form-group col">
                     <label htmlFor="birthDate">Birth Date</label>
                     <FormField
-                      type="data"
+                      type="date"
                       placeholder="Enter Birth Date"
                       name="birthDate"
                       register={register}
