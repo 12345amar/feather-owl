@@ -3,7 +3,7 @@ import { z } from "zod";
 export const LoginUserSchema = z.object({
   username: z
     .string({
-      required_error: "Please enter a valid username",
+      required_error: "Please testing enter a valid username",
     })
     .trim()
     .min(3, { message: "Please enter the username correctly" }),

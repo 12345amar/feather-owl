@@ -36,6 +36,7 @@ const myHeaders = () => {
  * @returns 
  */
 const getAuthorizationCredentials = async () => {
+  console.log("=======")
   const clientId = process.env.NEXT_PUBLIC_WSO2_CLIENT_ID;
   const secretId = process.env.NEXT_PUBLIC_WSO2_SECRET_ID;
   const grantType = process.env.NEXT_PUBLIC_WSO2_GRANT_TYPE;
